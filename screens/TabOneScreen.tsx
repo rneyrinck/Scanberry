@@ -48,7 +48,9 @@ export default function TabOneScreen({
       title: "DecoArt Americana Acrylic Color, 16 Oz., Bright White",
     },
   ]);
+  // state for holding color of topcard but indicator
   const [budgetCardIconColor, setBudgetCardIconColor] = useState('#00ff00')
+
   // overlay visibility for productlist and bduget
   const [visible, setVisible] = useState(false);
   // urls for api call
