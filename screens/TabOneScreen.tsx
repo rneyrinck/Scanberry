@@ -5,6 +5,7 @@ import {
   Modal,
   FlatList,
   Image,
+  ScrollView
 } from "react-native";
 import React, { FC, useState, useEffect, ReactElement } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
@@ -14,6 +15,7 @@ import { RootTabScreenProps } from "../types";
 import Colors from "../constants/Colors";
 import Dropdown from "./TabTwoScreen";
 import { wrap } from "module";
+import { Ionicons } from "@expo/vector-icons";
 // import React, { FC, useState } from 'react';
 // import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 // import { View } from '../components/Themed';
@@ -96,7 +98,7 @@ export default function TabOneScreen({
       setBudgetCardIconColor("#00ff00");
       return `$${(budget - currentTotal).toFixed(2)} under budget`;
     }
-    console.log("get current total");
+    // console.log("get current total");
   };
 
   // setting up permissions
@@ -244,6 +246,9 @@ export default function TabOneScreen({
                 borderBottomLeftRadius: 20,
                 borderBottomRightRadius: 20,
                 backgroundColor: "#fff",
+                // height: 50,
+                // width: 400
+                // zIndex: 
                 // borderColor: "#00ff00",
                 // borderWidth: 5
               }}
@@ -262,6 +267,7 @@ export default function TabOneScreen({
                       padding: 6,
                       borderBottomLeftRadius: 20,
                       borderBottomRightRadius: 20,
+                      
                     }}
                     key={index}
                   >
@@ -294,6 +300,7 @@ export default function TabOneScreen({
                   // </View>
                 );
               })}
+              
             </View>
             {/* details card underneath productlist */}
             <View
@@ -454,6 +461,9 @@ export default function TabOneScreen({
           </View>
           {/* calling function for displaying items in productlist as a dropdown */}
           {renderDropdown()}
+            <View style={{backgroundColor: "#fff", alignItems: "center", alignContent:"center", justifyContent: "center"}}>
+      <Ionicons name="caret-down" size={32} color="black" />
+    </View>
         </View>
 
         <Text style={styles.buttonText}></Text>
@@ -485,11 +495,11 @@ export default function TabOneScreen({
         // scanned item popup
         <View
           style={{
-            backgroundColor: "#fff",
+            // backgroundColor: "#fff",
             borderTopRightRadius: 20,
             borderTopLeftRadius: 20,
             position: "absolute",
-            zIndex: 100,
+            zIndex: 1,
             bottom: 100,
           }}
         >
@@ -497,8 +507,11 @@ export default function TabOneScreen({
           <View
             style={{
               backgroundColor: "#fff",
-              borderTopRightRadius: 20,
-              borderTopLeftRadius: 20,
+
+              borderRadius: 20,
+              // flex: 1,
+
+              justifyContent: "space-evenly",
             }}
           >
             <Image
@@ -510,24 +523,44 @@ export default function TabOneScreen({
                 borderTopLeftRadius: 20,
               }}
             />
-            <Text style={{ color: "#000" }}>{scannedItemStorage.title}</Text>
-            <Button
-              title={"-"}
-              onPress={() => {
-                if (amountOfProductToAdd > 0) {
-                  setAmountOfProductToAdd(amountOfProductToAdd - 1);
-                } else {
-                  setAmountOfProductToAdd(amountOfProductToAdd);
-                }
+            <View
+              style={{
+                backgroundColor: "#fff",
+                flex: 1,
+                flexDirection: "row",
+                height: 100,
+                alignContent: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: 10,
+                borderBottomRightRadius: 20,
+                borderBottomLeftRadius: 20,
               }}
-            />
-            <Text style={{ color: "#000" }}>{amountOfProductToAdd}</Text>
-            <Button
-              title={"+"}
-              onPress={() => setAmountOfProductToAdd(amountOfProductToAdd + 1)}
-            />
+            >
+              <Text style={{ color: "#000", flexWrap: "wrap", flex: 1 }}>
+                {scannedItemStorage.title}
+              </Text>
+              {/* button subtracts amount of producttoadd if it isnt zero */}
+              <Button
+                title={"-"}
+                onPress={() => {
+                  if (amountOfProductToAdd > 0) {
+                    setAmountOfProductToAdd(amountOfProductToAdd - 1);
+                  } else {
+                    setAmountOfProductToAdd(amountOfProductToAdd);
+                  }
+                }}
+              />
+              <Text style={{ color: "#000" }}>{amountOfProductToAdd}</Text>
+              <Button
+                title={"+"}
+                onPress={() =>
+                  setAmountOfProductToAdd(amountOfProductToAdd + 1)
+                }
+              />
+            </View>
           </View>
-          {/* button view for styling */}
+          {/* add to cart button view for styling */}
           <View
             style={{
               width: "100%",
@@ -535,7 +568,34 @@ export default function TabOneScreen({
               borderRadius: 20,
               backgroundColor: "blue",
               height: 50,
-              justifyContent: "center"
+              justifyContent: "center",
+              marginTop: 1,
+            }}
+          >
+            {/* for loop taking amount of items to be added and looping through add scannitemstorage to productlist */}
+            <Button
+              title={`Add to Cart                                $${
+                scannedItemStorage.price * amountOfProductToAdd
+              }`}
+              onPress={() => {
+                for (let i = 0; i < amountOfProductToAdd; i++) {
+                  addScannedItemStorageToProductList();
+                }
+                setScanned(false);
+              }}
+              color="#fff"
+            />
+          </View>
+          {/* scan again button view for styling */}
+          <View
+            style={{
+              width: "100%",
+              alignSelf: "center",
+              borderRadius: 20,
+              backgroundColor: "red",
+              height: 50,
+              justifyContent: "center",
+              marginTop: 1,
             }}
           >
             <Button
@@ -544,29 +604,7 @@ export default function TabOneScreen({
                 setText("Please Scan Item");
                 setScanned(false);
               }}
-              color="tomato"
-            />
-          </View>
-          {/* button view for styling */}
-          <View
-            style={{
-              width: "100%",
-              alignSelf: "center",
-              borderRadius: 20,
-              backgroundColor: "blue",
-              height: 50,
-              justifyContent: "center"
-            }}
-          >
-            <Button
-              title={`Add to Cart                               $${
-                scannedItemStorage.price * amountOfProductToAdd
-              }`}
-              onPress={() => {
-                for(let i=0; i<amountOfProductToAdd;i++){
-                addScannedItemStorageToProductList();
-                }
-              }}
+              color="#fff"
             />
           </View>
         </View>
