@@ -83,6 +83,10 @@ const [budgetModalButtonTextColor, setBudgetModalButtonTextColor] = useState(['#
 const handleModal = () =>
     setIsBudgetModalVisible(() => !isBudgetModalVisible);
 
+    // custom amount modal selected from budget modal
+    const [isBudgetModalNestedCustomAmountModalVisible, setIsBudgetModalNestedCustomAmountModalVisible] = useState(false);
+
+    const handleBudgetModalNestedCustomAmountModalVisible = () => setIsBudgetModalNestedCustomAmountModalVisible(() => !isBudgetModalNestedCustomAmountModalVisible);
   // formula for setting current total state by mapping through items in productlist and adding their price
   const getCurrentTotalFromProductList = () => {
     // variable holding added price as productlist is looped over
@@ -581,8 +585,38 @@ const handleModal = () =>
               let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
               copyOfButtonTextColor[4]='#fff'
               setBudgetModalButtonTextColor(copyOfButtonTextColor)
-              setBudget(80)}} />
+              handleBudgetModalNestedCustomAmountModalVisible()}} />
           </View>
+          <Modal visible={isBudgetModalNestedCustomAmountModalVisible}>
+          <View
+          style={{
+            backgroundColor: "black",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View
+            style={{
+              alignSelf: "flex-start",
+              position: "absolute",
+              top: 70,
+              left: 10,
+            }}
+          >
+            <Button title={"Back"} onPress={handleBudgetModalNestedCustomAmountModalVisible} color={"white"} />
+            {/* preset options for budget */}
+          </View>
+          <Text style={{ fontSize: 35, fontWeight: "600", margin: 10 }}>
+            {" "}
+            Spending Goal{" "}
+          </Text>
+          <Text style={{ width: "50%", textAlign: "center", lineHeight: 20, marginBottom: 20 }}>
+            Choose from preset amounts or enter a custom amount
+          </Text>
+          </View>
+
+          </Modal>
         </View>
       </Modal>
 
