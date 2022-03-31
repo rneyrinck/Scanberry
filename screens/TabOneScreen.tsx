@@ -27,6 +27,8 @@ export default function TabOneScreen({
   const [budget, setBudget] = useState(10);
   // current total is added up price of all items in cart
   const [currentTotal, setCurrentTotal] = useState(0);
+  // estimated tax rate > placeholder as an average tax rate of %6.25
+  const [taxRate, setTaxRate] = useState(0.0625);
   // storage for scanned item information
   const [scannedItemStorage, setScannedItemStorage] = useState({});
   // list of user saved items pulled from scan api call
@@ -49,7 +51,7 @@ export default function TabOneScreen({
     },
   ]);
   // state for holding color of topcard but indicator
-  const [budgetCardIconColor, setBudgetCardIconColor] = useState('#00ff00')
+  const [budgetCardIconColor, setBudgetCardIconColor] = useState("#00ff00");
 
   // overlay visibility for productlist and bduget
   const [visible, setVisible] = useState(false);
@@ -69,26 +71,23 @@ export default function TabOneScreen({
       // value is a string, as each item is looped over changed price from str into integer with decimals(parsefloat)
       totalPlaceholder += parseFloat(productList[i].price);
     }
+    // current total plus estimated average tax rate of %6.25
+    totalPlaceholder += totalPlaceholder * taxRate;
+
     // update current total state with value of totalPlaceholder
-    // console.log(totalPlaceholder)
     setCurrentTotal(totalPlaceholder);
   };
   //function for returning text in topcard that compares current total to budget and returns over/under by x amount message
-  const currentTotalBudgetComparisonMessage = () =>{
-    if(currentTotal>budget){
-      setBudgetCardIconColor('#ff0000')
-      return(
-        `$${currentTotal - budget} over budget`
-        )
-      }else if(currentTotal<budget){
-        setBudgetCardIconColor('#00ff00')
-        return(
-          `$${budget - currentTotal} under budget`
-        )
-      }
-      console.log("get current total")
+  const currentTotalBudgetComparisonMessage = () => {
+    if (currentTotal > budget) {
+      setBudgetCardIconColor("#ff0000");
+      return `$${(currentTotal - budget).toFixed(2)} over budget`;
+    } else if (currentTotal < budget) {
+      setBudgetCardIconColor("#00ff00");
+      return `$${(budget - currentTotal).toFixed(2)} under budget`;
     }
-  
+    console.log("get current total");
+  };
 
   // setting up permissions
   const askForCameraPermission = () => {
@@ -136,8 +135,8 @@ export default function TabOneScreen({
     productListCopy.push(scannedItemStorage);
     // set product list state as updated list
     setProductList(productListCopy);
-    // set current total with new item added 
-    getCurrentTotalFromProductList()
+    // set current total with new item added
+    getCurrentTotalFromProductList();
     // alert that item has been added
     alert("Item added to cart!");
     // remove popup so use can continue scanning new items
@@ -185,10 +184,7 @@ export default function TabOneScreen({
       </View>
     );
   }
-  // teset data to be mapped over for
 
-  // example code for dropdown picker
-  // \/\/\/\/\/\/\/\/
   interface Props {
     label: string;
   }
@@ -202,50 +198,182 @@ export default function TabOneScreen({
     const renderDropdown = () => {
       if (visible) {
         return (
-          <View style={styles.dropdown}>
-            {/* <Text>{productList[0].title}</Text> */}
-            {productList.map((item) => {
-              // console.log(item.title);
-              return (
-                // <View key={item.barcode} style={styles.dropdownItem}>
-                <View
-                  style={{
-                    backgroundColor: "#fff",
-                    width: 400,
-                    justifyContent: "center",
-                    alignContent: "center",
-                    flexGrow: 1,
-                    flex: 1,
-                    flexDirection: "row",
-                    padding: 6,
-                  }}
-                  key={item.barcode}
-                >
-                  <Image
-                    source={{ uri: item.image }}
-                    style={{ width: 50, height: 50 }}
-                  />
-                  <Text
+          // view encapsulating all items in productlist
+          <View
+            style={{
+              position: "absolute",
+              backgroundColor: "#000",
+              top: 75,
+              zIndex: 2,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              // borderBottomLeftRadius: 20,
+              // borderBottomRightRadius: 20,
+            }}
+          >
+            {/* productlist top wrapper  */}
+            <View
+              style={{
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                backgroundColor: "#ADD8E6",
+                height: 50,
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "#000", fontSize: 25, fontWeight: "600" }}>
+                Cart
+              </Text>
+            </View>
+            {/* product list allitems view */}
+            <View
+              style={{
+                borderBottomLeftRadius: 20,
+                borderBottomRightRadius: 20,
+                backgroundColor: "#fff",
+                // borderColor: "#00ff00",
+                // borderWidth: 5
+              }}
+            >
+              {/* mapping through list to create item cards */}
+              {productList.map((item) => {
+                // console.log(item.title);
+                return (
+                  // productlist single itemcard
+                  <View
                     style={{
-                      color: "#000",
-                      flexShrink: 6,
-                      margin: 6,
-                      width: 230,
+                      backgroundColor: "#fff",
+                      flexGrow: 1,
+                      flex: 1,
+                      flexDirection: "row",
+                      padding: 6,
+                      borderBottomLeftRadius: 20,
+                      borderBottomRightRadius: 20,
                     }}
+                    key={item.barcode}
                   >
-                    {item.title}
-                  </Text>
-                  <Button title="+" onPress={() => console.log("plus")} />
-                  <Button title="-" onPress={() => console.log("minus")} />
-                </View>
-                // </View>
-              );
-            })}
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ width: 50, height: 50 }}
+                    />
+                    <Text
+                      style={{
+                        color: "#000",
+                        flexShrink: 6,
+                        margin: 6,
+                        width: 230,
+                      }}
+                    >
+                      {item.title}
+                    </Text>
+                    <Text style={{color: "#000", alignSelf: "center"}}>${parseFloat(item.price)}</Text>
+                    <View
+                      style={{
+                        height: 1,
+                        width: "110%",
+                        position: "absolute",
+                        backgroundColor: "#000",
+                      }}
+                    />
+                  </View>
+                  // </View>
+                );
+              })}
+            </View>
+            {/* details card underneath productlist */}
+            <View
+              style={{
+                position: "relative",
+                backgroundColor: "#fff",
+                marginTop: 1,
+                borderTopColor: "#fff",
+                borderRadius: 20,
+                height: 200,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  width: "80%",
+                  backgroundColor: "fff",
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#000" }}>Taxes</Text>
+
+                <Text style={{ color: "#000" }}>
+                  ${(currentTotal * taxRate).toFixed(2)}
+                </Text>
+              </View>
+              <View
+                style={{
+                  width: "80%",
+                  backgroundColor: "fff",
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#000" }}>Discounts</Text>
+
+                <Text style={{ color: "#000" }}>$0.00</Text>
+              </View>
+              <View
+                style={{
+                  width: "80%",
+                  backgroundColor: "fff",
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#000", fontWeight: "600" }}>Total</Text>
+
+                <Text style={{ color: "#000" , fontWeight: "600" }}>
+                  ${currentTotal.toFixed(2)}
+                </Text>
+              </View>
+
+              {/* spacer */}
+              <View
+                style={{
+                  height: 1,
+                  width: "110%",
+
+                  backgroundColor: "#000",
+                }}
+              />
+              {/* bottom of details card states % of total with button to edit budget */}
+              <View
+                style={{
+                  width: "80%",
+                  backgroundColor: "fff",
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "#000" }}>
+                  {((currentTotal / budget)*100).toFixed(0)}% of spending goal
+                </Text>
+                {/* <View style={{width: 200}}></View> */}
+                <Text style={{ color: "#000" }}>Edit</Text>
+              </View>
+            </View>
           </View>
         );
       }
     };
-    // console.log(productList[0].image);
+
     return (
       // this is the top card with dropdown feature on press,
       <TouchableOpacity
@@ -289,20 +417,23 @@ export default function TabOneScreen({
             }}
           >
             {/* budget state inside of red box */}
-            <Text style={{ fontSize: 20, fontWeight: "600", color: "#000" }}>${budget}</Text>
+            <Text style={{ fontSize: 20, fontWeight: "600", color: "#000" }}>
+              ${budget}
+            </Text>
           </View>
           {/* text and information view for current total and comparison to budget */}
           <View
             style={{
-              backgroundColor: "#ff0000",
+              backgroundColor: "#fff",
               marginLeft: 30,
               flex: 1,
               flexDirection: "column",
+              alignSelf:"center"
             }}
           >
-            <Text>Current total: ${currentTotal}</Text>
+            <Text style={{marginBottom: 6, color: "fff"}}>Current total: ${currentTotal.toFixed(2)}</Text>
             {/* function for displaying over/under budget by x amount. Takes currenttotal minus budget and returns text with amount */}
-            <Text>{currentTotalBudgetComparisonMessage()}</Text>
+            <Text style={{fontWeight:"600", color: "fff"}}>{currentTotalBudgetComparisonMessage()}</Text>
           </View>
           {/* calling function for displaying items in productlist as a dropdown */}
           {renderDropdown()}
