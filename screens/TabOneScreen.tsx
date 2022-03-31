@@ -21,7 +21,8 @@ export default function TabOneScreen({
   navigation,
 }: RootTabScreenProps<"TabOne">) {
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
+  // default false
+  const [scanned, setScanned] = useState(true);
   const [text, setText] = useState("Not yet scanned");
   // usestate for current budget
   const [budget, setBudget] = useState(10);
@@ -30,7 +31,15 @@ export default function TabOneScreen({
   // estimated tax rate > placeholder as an average tax rate of %6.25
   const [taxRate, setTaxRate] = useState(0.0625);
   // storage for scanned item information
-  const [scannedItemStorage, setScannedItemStorage] = useState({});
+  // default -> {}
+  const [scannedItemStorage, setScannedItemStorage] = useState({
+    barcode: "766218109216",
+    description:
+      "Whether you are starting a DIY project, creating unique gifts or upcycling various odds and ends this highly-pigmented Americana Acrylic Color is ideal for decorative painting, home decor and general craft projects. The vibrant, rich acrylic color blends easily with others in the Americana line, producing smooth, creamy colors that dry to a durable matte finish. Transform a variety of surfaces including wood, canvas, plaster, resins, papier mache, candles, walls, fabric, leather, Styrofoam, ceramic bisque, polymer clay, paper, poster board, metal and more.",
+    image: "https://images.barcodelookup.com/9614/96144763-1.jpg",
+    price: "9.99",
+    title: "DecoArt Americana Acrylic Color, 16 Oz., Slate Gray",
+  });
   // list of user saved items pulled from scan api call
   const [productList, setProductList] = useState([
     {
@@ -52,7 +61,8 @@ export default function TabOneScreen({
   ]);
   // state for holding color of topcard but indicator
   const [budgetCardIconColor, setBudgetCardIconColor] = useState("#00ff00");
-
+  // amount of a single scanned item to be added
+  const [amountOfProductToAdd, setAmountOfProductToAdd] = useState(1);
   // overlay visibility for productlist and bduget
   const [visible, setVisible] = useState(false);
   // urls for api call
@@ -146,6 +156,7 @@ export default function TabOneScreen({
   // request camera permission
   useEffect(() => {
     askForCameraPermission();
+    getCurrentTotalFromProductList();
   }, []);
 
   // for tutorial screens we could refactor and duplicate the nav feature at the bottom of the app with links to each other and then a skip that sends to scan page and an endpoint next button that also sends ot scan page.
@@ -159,7 +170,7 @@ export default function TabOneScreen({
   // what happens when we scan bar code
   function handleBarCodeScanned({ type, data }) {
     setScanned(true);
-    setText(data);
+    setText("add to cart?");
     getInfoFromBarCode(data);
     console.log("Type: " + type + "\nData: " + data);
   }
@@ -238,7 +249,7 @@ export default function TabOneScreen({
               }}
             >
               {/* mapping through list to create item cards */}
-              {productList.map((item) => {
+              {productList.map((item, index) => {
                 // console.log(item.title);
                 return (
                   // productlist single itemcard
@@ -252,7 +263,7 @@ export default function TabOneScreen({
                       borderBottomLeftRadius: 20,
                       borderBottomRightRadius: 20,
                     }}
-                    key={item.barcode}
+                    key={index}
                   >
                     <Image
                       source={{ uri: item.image }}
@@ -268,7 +279,9 @@ export default function TabOneScreen({
                     >
                       {item.title}
                     </Text>
-                    <Text style={{color: "#000", alignSelf: "center"}}>${parseFloat(item.price)}</Text>
+                    <Text style={{ color: "#000", alignSelf: "center" }}>
+                      ${parseFloat(item.price)}
+                    </Text>
                     <View
                       style={{
                         height: 1,
@@ -328,7 +341,7 @@ export default function TabOneScreen({
               <View
                 style={{
                   width: "80%",
-                  backgroundColor: "fff",
+                  backgroundColor: "#fff",
                   flex: 1,
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -337,7 +350,7 @@ export default function TabOneScreen({
               >
                 <Text style={{ color: "#000", fontWeight: "600" }}>Total</Text>
 
-                <Text style={{ color: "#000" , fontWeight: "600" }}>
+                <Text style={{ color: "#000", fontWeight: "600" }}>
                   ${currentTotal.toFixed(2)}
                 </Text>
               </View>
@@ -363,7 +376,7 @@ export default function TabOneScreen({
                 }}
               >
                 <Text style={{ color: "#000" }}>
-                  {((currentTotal / budget)*100).toFixed(0)}% of spending goal
+                  {((currentTotal / budget) * 100).toFixed(0)}% of spending goal
                 </Text>
                 {/* <View style={{width: 200}}></View> */}
                 <Text style={{ color: "#000" }}>Edit</Text>
@@ -428,12 +441,16 @@ export default function TabOneScreen({
               marginLeft: 30,
               flex: 1,
               flexDirection: "column",
-              alignSelf:"center"
+              alignSelf: "center",
             }}
           >
-            <Text style={{marginBottom: 6, color: "fff"}}>Current total: ${currentTotal.toFixed(2)}</Text>
+            <Text style={{ marginBottom: 6, color: "fff" }}>
+              Current total: ${currentTotal.toFixed(2)}
+            </Text>
             {/* function for displaying over/under budget by x amount. Takes currenttotal minus budget and returns text with amount */}
-            <Text style={{fontWeight:"600", color: "fff"}}>{currentTotalBudgetComparisonMessage()}</Text>
+            <Text style={{ fontWeight: "600", color: "fff" }}>
+              {currentTotalBudgetComparisonMessage()}
+            </Text>
           </View>
           {/* calling function for displaying items in productlist as a dropdown */}
           {renderDropdown()}
@@ -465,16 +482,93 @@ export default function TabOneScreen({
       <Text style={styles.mainText}>{text}</Text>
 
       {scanned && (
-        <View>
-          <Button
-            title={"Scan Again?"}
-            onPress={() => setScanned(false)}
-            color="tomato"
-          />
-          <Button
-            title={"Add to Cart"}
-            onPress={() => addScannedItemStorageToProductList()}
-          />
+        // scanned item popup
+        <View
+          style={{
+            backgroundColor: "#fff",
+            borderTopRightRadius: 20,
+            borderTopLeftRadius: 20,
+            position: "absolute",
+            zIndex: 100,
+            bottom: 100,
+          }}
+        >
+          {/* top -> image and item card with plus/minus */}
+          <View
+            style={{
+              backgroundColor: "#fff",
+              borderTopRightRadius: 20,
+              borderTopLeftRadius: 20,
+            }}
+          >
+            <Image
+              source={{ uri: scannedItemStorage.image }}
+              style={{
+                width: "100%",
+                height: "50%",
+                borderTopRightRadius: 20,
+                borderTopLeftRadius: 20,
+              }}
+            />
+            <Text style={{ color: "#000" }}>{scannedItemStorage.title}</Text>
+            <Button
+              title={"-"}
+              onPress={() => {
+                if (amountOfProductToAdd > 0) {
+                  setAmountOfProductToAdd(amountOfProductToAdd - 1);
+                } else {
+                  setAmountOfProductToAdd(amountOfProductToAdd);
+                }
+              }}
+            />
+            <Text style={{ color: "#000" }}>{amountOfProductToAdd}</Text>
+            <Button
+              title={"+"}
+              onPress={() => setAmountOfProductToAdd(amountOfProductToAdd + 1)}
+            />
+          </View>
+          {/* button view for styling */}
+          <View
+            style={{
+              width: "100%",
+              alignSelf: "center",
+              borderRadius: 20,
+              backgroundColor: "blue",
+              height: 50,
+              justifyContent: "center"
+            }}
+          >
+            <Button
+              title={"Scan Again?"}
+              onPress={() => {
+                setText("Please Scan Item");
+                setScanned(false);
+              }}
+              color="tomato"
+            />
+          </View>
+          {/* button view for styling */}
+          <View
+            style={{
+              width: "100%",
+              alignSelf: "center",
+              borderRadius: 20,
+              backgroundColor: "blue",
+              height: 50,
+              justifyContent: "center"
+            }}
+          >
+            <Button
+              title={`Add to Cart                               $${
+                scannedItemStorage.price * amountOfProductToAdd
+              }`}
+              onPress={() => {
+                for(let i=0; i<amountOfProductToAdd;i++){
+                addScannedItemStorageToProductList();
+                }
+              }}
+            />
+          </View>
         </View>
       )}
       {/* <EditScreenInfo path="/screens/TabOneScreen.tsx" /> */}
@@ -509,7 +603,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   mainText: {
-    fontSize: 60,
+    fontSize: 30,
     margin: 20,
   },
   topCard: {
