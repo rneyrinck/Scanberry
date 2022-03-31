@@ -5,7 +5,7 @@ import {
   Modal,
   FlatList,
   Image,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import React, { FC, useState, useEffect, ReactElement } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
@@ -42,7 +42,7 @@ export default function TabOneScreen({
     price: "9.99",
     title: "DecoArt Americana Acrylic Color, 16 Oz., Slate Gray",
   });
-  // list of user saved items pulled from scan api call
+  // list of user saved items pulled from scan api call -> defualt is empty
   const [productList, setProductList] = useState([
     {
       barcode: "766218109223",
@@ -61,7 +61,7 @@ export default function TabOneScreen({
       title: "DecoArt Americana Acrylic Color, 16 Oz., Bright White",
     },
   ]);
-  // state for holding color of topcard but indicator
+  // state for holding color of topcard budget indicator
   const [budgetCardIconColor, setBudgetCardIconColor] = useState("#00ff00");
   // amount of a single scanned item to be added
   const [amountOfProductToAdd, setAmountOfProductToAdd] = useState(1);
@@ -73,6 +73,15 @@ export default function TabOneScreen({
 
   // example fetch for barcode lookup
   // https://api.barcodelookup.com/v3/products?barcode=9780140157376&formatted=y&key=krrps3snh5q72np1iektbej3l34vmb
+
+  // Set budget Modal
+  const [isBudgetModalVisible, setIsBudgetModalVisible] = useState(false);
+// budget modal spending goal view background color array
+  const [budgetModalGoalBackGroundColor, setBudgetModalGoalBackGroundColor] = useState(['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6'])
+//  budget model spending goal button text color array
+const [budgetModalButtonTextColor, setBudgetModalButtonTextColor] = useState(['#000000','#000000','#000000','#000000','#000000'])
+const handleModal = () =>
+    setIsBudgetModalVisible(() => !isBudgetModalVisible);
 
   // formula for setting current total state by mapping through items in productlist and adding their price
   const getCurrentTotalFromProductList = () => {
@@ -201,6 +210,7 @@ export default function TabOneScreen({
   interface Props {
     label: string;
   }
+
   const Dropdown: FC<Props> = ({ label }) => {
     const [visible, setVisible] = useState(false);
 
@@ -248,7 +258,7 @@ export default function TabOneScreen({
                 backgroundColor: "#fff",
                 // height: 50,
                 // width: 400
-                // zIndex: 
+                // zIndex:
                 // borderColor: "#00ff00",
                 // borderWidth: 5
               }}
@@ -267,7 +277,6 @@ export default function TabOneScreen({
                       padding: 6,
                       borderBottomLeftRadius: 20,
                       borderBottomRightRadius: 20,
-                      
                     }}
                     key={index}
                   >
@@ -300,7 +309,6 @@ export default function TabOneScreen({
                   // </View>
                 );
               })}
-              
             </View>
             {/* details card underneath productlist */}
             <View
@@ -379,14 +387,15 @@ export default function TabOneScreen({
                   flex: 1,
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  alignItems: "center",
+                  alignItems: "baseline",
+                  paddingTop: 5,
                 }}
               >
                 <Text style={{ color: "#000" }}>
                   {((currentTotal / budget) * 100).toFixed(0)}% of spending goal
                 </Text>
-                {/* <View style={{width: 200}}></View> */}
-                <Text style={{ color: "#000" }}>Edit</Text>
+
+                <Button title={"Edit"} onPress={() => console.log("edit")} />
               </View>
             </View>
           </View>
@@ -461,9 +470,16 @@ export default function TabOneScreen({
           </View>
           {/* calling function for displaying items in productlist as a dropdown */}
           {renderDropdown()}
-            <View style={{backgroundColor: "#fff", alignItems: "center", alignContent:"center", justifyContent: "center"}}>
-      <Ionicons name="caret-down" size={32} color="black" />
-    </View>
+          <View
+            style={{
+              backgroundColor: "#fff",
+              alignItems: "center",
+              alignContent: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Ionicons name="caret-down" size={32} color="black" />
+          </View>
         </View>
 
         <Text style={styles.buttonText}></Text>
@@ -477,6 +493,98 @@ export default function TabOneScreen({
     <View style={styles.container}>
       <Dropdown label={`ProductList`} />
       {/* <Dropdown label="Productlist" /> */}
+      <Button title="modal" onPress={handleModal} />
+      {/* set budget modal -> here temporarily */}
+      <Modal visible={isBudgetModalVisible}>
+        <View
+          style={{
+            backgroundColor: "black",
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View
+            style={{
+              alignSelf: "flex-start",
+              position: "absolute",
+              top: 70,
+              left: 10,
+            }}
+          >
+            <Button title={"Close"} onPress={handleModal} color={"white"} />
+            {/* preset options for budget */}
+          </View>
+          <Text style={{ fontSize: 35, fontWeight: "600", margin: 10 }}>
+            {" "}
+            Spending Goal{" "}
+          </Text>
+          <Text style={{ width: "50%", textAlign: "center", lineHeight: 20, marginBottom: 20 }}>
+            Choose from preset amounts or enter a custom amount
+          </Text>
+          {/* each of these following five views contains a button with an onPress function that changes the backgroundcolor, button text color, and sets bugdet(except for custom amount) */}
+          
+          {/* view with background color as state in array with each view/button group corresponding indescending order to their index in budgetModalBackgroundColor useState array */}
+          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[0], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20}}>
+            {/* button with text color as array item (color code) on press changes the index corresponding to the button in descending order of all five buttons and changes everything else back to default light blue bacckground black font color */}
+            <Button title="$20.00" color={budgetModalButtonTextColor[0]} onPress={() => {
+              // copy of state array for manipulation
+              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
+              // changing background color at index to show selection of this button
+              copyOfBackGroundColor[0]='#00008b'
+              // setting background color use state array
+              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
+              // make copy of button font color array for manipulation
+              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
+              // chaning array at index to white for better contrast with darker blue
+              copyOfButtonTextColor[0]='#fff'
+              // updating the usestate 
+              setBudgetModalButtonTextColor(copyOfButtonTextColor)
+              // setting the budget use state
+              setBudget(20)}} />
+          </View>
+          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[1], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center'}}>
+            <Button title="$40.00" color={budgetModalButtonTextColor[1]} onPress={() => {
+              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
+              copyOfBackGroundColor[1]='#00008b'
+              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
+              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
+              copyOfButtonTextColor[1]='#fff'
+              setBudgetModalButtonTextColor(copyOfButtonTextColor)
+              setBudget(40)}} />
+          </View>
+          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[2], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center'}}>
+            <Button title="$60.00" color={budgetModalButtonTextColor[2]} onPress={() => {
+              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
+              copyOfBackGroundColor[2]='#00008b'
+              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
+              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
+              copyOfButtonTextColor[2]='#fff'
+              setBudgetModalButtonTextColor(copyOfButtonTextColor)
+              setBudget(60)}} />
+          </View>
+          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[3], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center'}}>
+            <Button title="$80.00" color={budgetModalButtonTextColor[3]} onPress={() => {
+              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
+              copyOfBackGroundColor[3]='#00008b'
+              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
+              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
+              copyOfButtonTextColor[3]='#fff'
+              setBudgetModalButtonTextColor(copyOfButtonTextColor)
+              setBudget(80)}} />
+          </View>
+          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[4], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center', borderBottomLeftRadius: 20, borderBottomRightRadius: 20}}>
+            <Button title="Custom amount" color={budgetModalButtonTextColor[4]} onPress={() => {
+              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
+              copyOfBackGroundColor[4]='#00008b'
+              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
+              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
+              copyOfButtonTextColor[4]='#fff'
+              setBudgetModalButtonTextColor(copyOfButtonTextColor)
+              setBudget(80)}} />
+          </View>
+        </View>
+      </Modal>
 
       <View
         style={styles.separator}
