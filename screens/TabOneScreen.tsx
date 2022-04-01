@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   ScrollView,
+  TextInput,
 } from "react-native";
 import React, { FC, useState, useEffect, ReactElement } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
@@ -76,17 +77,33 @@ export default function TabOneScreen({
 
   // Set budget Modal
   const [isBudgetModalVisible, setIsBudgetModalVisible] = useState(false);
-// budget modal spending goal view background color array
-  const [budgetModalGoalBackGroundColor, setBudgetModalGoalBackGroundColor] = useState(['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6'])
-//  budget model spending goal button text color array
-const [budgetModalButtonTextColor, setBudgetModalButtonTextColor] = useState(['#000000','#000000','#000000','#000000','#000000'])
-const handleModal = () =>
+  // budget modal spending goal view background color array
+  const [budgetModalGoalBackGroundColor, setBudgetModalGoalBackGroundColor] =
+    useState(["#ADD8E6", "#ADD8E6", "#ADD8E6", "#ADD8E6", "#ADD8E6"]);
+  //  budget model spending goal button text color array
+  const [budgetModalButtonTextColor, setBudgetModalButtonTextColor] = useState([
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+  ]);
+  const handleModal = () =>
     setIsBudgetModalVisible(() => !isBudgetModalVisible);
 
-    // custom amount modal selected from budget modal
-    const [isBudgetModalNestedCustomAmountModalVisible, setIsBudgetModalNestedCustomAmountModalVisible] = useState(false);
+  // custom amount modal selected from budget modal
+  const [
+    isBudgetModalNestedCustomAmountModalVisible,
+    setIsBudgetModalNestedCustomAmountModalVisible,
+  ] = useState(false);
 
-    const handleBudgetModalNestedCustomAmountModalVisible = () => setIsBudgetModalNestedCustomAmountModalVisible(() => !isBudgetModalNestedCustomAmountModalVisible);
+  const handleBudgetModalNestedCustomAmountModalVisible = () =>
+    setIsBudgetModalNestedCustomAmountModalVisible(
+      () => !isBudgetModalNestedCustomAmountModalVisible
+    );
+  // custom amount use state hook for number input
+  const [number, onChangeNumber] = useState(0);
+
   // formula for setting current total state by mapping through items in productlist and adding their price
   const getCurrentTotalFromProductList = () => {
     // variable holding added price as productlist is looped over
@@ -185,7 +202,7 @@ const handleModal = () =>
   // what happens when we scan bar code
   function handleBarCodeScanned({ type, data }) {
     setScanned(true);
-    setText("add to cart?");
+    // setText("add to cart?");
     getInfoFromBarCode(data);
     console.log("Type: " + type + "\nData: " + data);
   }
@@ -399,7 +416,7 @@ const handleModal = () =>
                   {((currentTotal / budget) * 100).toFixed(0)}% of spending goal
                 </Text>
 
-                <Button title={"Edit"} onPress={() => console.log("edit")} />
+                <Button title={"Edit"} onPress={handleModal} />
               </View>
             </View>
           </View>
@@ -497,7 +514,7 @@ const handleModal = () =>
     <View style={styles.container}>
       <Dropdown label={`ProductList`} />
       {/* <Dropdown label="Productlist" /> */}
-      <Button title="modal" onPress={handleModal} />
+      {/* <Button title="modal" onPress={handleModal} /> */}
       {/* set budget modal -> here temporarily */}
       <Modal visible={isBudgetModalVisible}>
         <View
@@ -523,99 +540,358 @@ const handleModal = () =>
             {" "}
             Spending Goal{" "}
           </Text>
-          <Text style={{ width: "50%", textAlign: "center", lineHeight: 20, marginBottom: 20 }}>
+          <Text
+            style={{
+              width: "50%",
+              textAlign: "center",
+              lineHeight: 20,
+              marginBottom: 20,
+            }}
+          >
             Choose from preset amounts or enter a custom amount
           </Text>
           {/* each of these following five views contains a button with an onPress function that changes the backgroundcolor, button text color, and sets bugdet(except for custom amount) */}
-          
+
           {/* view with background color as state in array with each view/button group corresponding indescending order to their index in budgetModalBackgroundColor useState array */}
-          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[0], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center', borderTopLeftRadius: 20, borderTopRightRadius: 20}}>
-            {/* button with text color as array item (color code) on press changes the index corresponding to the button in descending order of all five buttons and changes everything else back to default light blue bacckground black font color */}
-            <Button title="$20.00" color={budgetModalButtonTextColor[0]} onPress={() => {
-              // copy of state array for manipulation
-              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
-              // changing background color at index to show selection of this button
-              copyOfBackGroundColor[0]='#00008b'
-              // setting background color use state array
-              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
-              // make copy of button font color array for manipulation
-              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
-              // chaning array at index to white for better contrast with darker blue
-              copyOfButtonTextColor[0]='#fff'
-              // updating the usestate 
-              setBudgetModalButtonTextColor(copyOfButtonTextColor)
-              // setting the budget use state
-              setBudget(20)}} />
-          </View>
-          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[1], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center'}}>
-            <Button title="$40.00" color={budgetModalButtonTextColor[1]} onPress={() => {
-              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
-              copyOfBackGroundColor[1]='#00008b'
-              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
-              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
-              copyOfButtonTextColor[1]='#fff'
-              setBudgetModalButtonTextColor(copyOfButtonTextColor)
-              setBudget(40)}} />
-          </View>
-          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[2], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center'}}>
-            <Button title="$60.00" color={budgetModalButtonTextColor[2]} onPress={() => {
-              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
-              copyOfBackGroundColor[2]='#00008b'
-              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
-              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
-              copyOfButtonTextColor[2]='#fff'
-              setBudgetModalButtonTextColor(copyOfButtonTextColor)
-              setBudget(60)}} />
-          </View>
-          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[3], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center'}}>
-            <Button title="$80.00" color={budgetModalButtonTextColor[3]} onPress={() => {
-              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
-              copyOfBackGroundColor[3]='#00008b'
-              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
-              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
-              copyOfButtonTextColor[3]='#fff'
-              setBudgetModalButtonTextColor(copyOfButtonTextColor)
-              setBudget(80)}} />
-          </View>
-          <View style={{margin:1,backgroundColor: budgetModalGoalBackGroundColor[4], width: '80%', height: 50,borderRadius: 2, justifyContent: 'center', borderBottomLeftRadius: 20, borderBottomRightRadius: 20}}>
-            <Button title="Custom amount" color={budgetModalButtonTextColor[4]} onPress={() => {
-              let copyOfBackGroundColor = ['#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6','#ADD8E6']
-              copyOfBackGroundColor[4]='#00008b'
-              setBudgetModalGoalBackGroundColor(copyOfBackGroundColor)
-              let copyOfButtonTextColor = ['#000000','#000000','#000000','#000000','#000000']
-              copyOfButtonTextColor[4]='#fff'
-              setBudgetModalButtonTextColor(copyOfButtonTextColor)
-              handleBudgetModalNestedCustomAmountModalVisible()}} />
-          </View>
-          <Modal visible={isBudgetModalNestedCustomAmountModalVisible}>
-          <View
-          style={{
-            backgroundColor: "black",
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
           <View
             style={{
-              alignSelf: "flex-start",
-              position: "absolute",
-              top: 70,
-              left: 10,
+              margin: 1,
+              backgroundColor: budgetModalGoalBackGroundColor[0],
+              width: "80%",
+              height: 50,
+              borderRadius: 2,
+              justifyContent: "center",
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
             }}
           >
-            <Button title={"Back"} onPress={handleBudgetModalNestedCustomAmountModalVisible} color={"white"} />
-            {/* preset options for budget */}
+            {/* button with text color as array item (color code) on press changes the index corresponding to the button in descending order of all five buttons and changes everything else back to default light blue bacckground black font color */}
+            <Button
+              title="$20.00"
+              color={budgetModalButtonTextColor[0]}
+              onPress={() => {
+                // copy of state array for manipulation
+                let copyOfBackGroundColor = [
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                ];
+                // changing background color at index to show selection of this button
+                copyOfBackGroundColor[0] = "#00008b";
+                // setting background color use state array
+                setBudgetModalGoalBackGroundColor(copyOfBackGroundColor);
+                // make copy of button font color array for manipulation
+                let copyOfButtonTextColor = [
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                ];
+                // chaning array at index to white for better contrast with darker blue
+                copyOfButtonTextColor[0] = "#fff";
+                // updating the usestate
+                setBudgetModalButtonTextColor(copyOfButtonTextColor);
+                // setting the budget use state
+                setBudget(20);
+              }}
+            />
           </View>
-          <Text style={{ fontSize: 35, fontWeight: "600", margin: 10 }}>
-            {" "}
-            Spending Goal{" "}
-          </Text>
-          <Text style={{ width: "50%", textAlign: "center", lineHeight: 20, marginBottom: 20 }}>
-            Choose from preset amounts or enter a custom amount
-          </Text>
+          <View
+            style={{
+              margin: 1,
+              backgroundColor: budgetModalGoalBackGroundColor[1],
+              width: "80%",
+              height: 50,
+              borderRadius: 2,
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              title="$40.00"
+              color={budgetModalButtonTextColor[1]}
+              onPress={() => {
+                let copyOfBackGroundColor = [
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                ];
+                copyOfBackGroundColor[1] = "#00008b";
+                setBudgetModalGoalBackGroundColor(copyOfBackGroundColor);
+                let copyOfButtonTextColor = [
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                ];
+                copyOfButtonTextColor[1] = "#fff";
+                setBudgetModalButtonTextColor(copyOfButtonTextColor);
+                setBudget(40);
+              }}
+            />
           </View>
+          <View
+            style={{
+              margin: 1,
+              backgroundColor: budgetModalGoalBackGroundColor[2],
+              width: "80%",
+              height: 50,
+              borderRadius: 2,
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              title="$60.00"
+              color={budgetModalButtonTextColor[2]}
+              onPress={() => {
+                let copyOfBackGroundColor = [
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                ];
+                copyOfBackGroundColor[2] = "#00008b";
+                setBudgetModalGoalBackGroundColor(copyOfBackGroundColor);
+                let copyOfButtonTextColor = [
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                ];
+                copyOfButtonTextColor[2] = "#fff";
+                setBudgetModalButtonTextColor(copyOfButtonTextColor);
+                setBudget(60);
+              }}
+            />
+          </View>
+          <View
+            style={{
+              margin: 1,
+              backgroundColor: budgetModalGoalBackGroundColor[3],
+              width: "80%",
+              height: 50,
+              borderRadius: 2,
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              title="$80.00"
+              color={budgetModalButtonTextColor[3]}
+              onPress={() => {
+                let copyOfBackGroundColor = [
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                ];
+                copyOfBackGroundColor[3] = "#00008b";
+                setBudgetModalGoalBackGroundColor(copyOfBackGroundColor);
+                let copyOfButtonTextColor = [
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                ];
+                copyOfButtonTextColor[3] = "#fff";
+                setBudgetModalButtonTextColor(copyOfButtonTextColor);
+                setBudget(80);
+              }}
+            />
+          </View>
+          <View
+            style={{
+              margin: 1,
+              backgroundColor: budgetModalGoalBackGroundColor[4],
+              width: "80%",
+              height: 50,
+              borderRadius: 2,
+              justifyContent: "center",
+              borderBottomLeftRadius: 20,
+              borderBottomRightRadius: 20,
+            }}
+          >
+            <Button
+              title="Custom amount"
+              color={budgetModalButtonTextColor[4]}
+              onPress={() => {
+                let copyOfBackGroundColor = [
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                  "#ADD8E6",
+                ];
+                copyOfBackGroundColor[4] = "#00008b";
+                setBudgetModalGoalBackGroundColor(copyOfBackGroundColor);
+                let copyOfButtonTextColor = [
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                  "#000000",
+                ];
+                copyOfButtonTextColor[4] = "#fff";
+                setBudgetModalButtonTextColor(copyOfButtonTextColor);
+                handleBudgetModalNestedCustomAmountModalVisible();
+              }}
+            />
+          </View>
+          {/* on submit button for closing modal */}
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#7a42f4",
+              padding: 10,
+              margin: 15,
+              height: 80,
+              width: "80%",
+              borderRadius: 20,
+              justifyContent: "center",
+            }}
+            onPress={() => {
+              // setBudget(number)
+              setIsBudgetModalVisible(false);
+              // setIsBudgetModalNestedCustomAmountModalVisible(false)
+            }}
+          >
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 20,
+                fontWeight: "500",
+                textAlign: "center",
+              }}
+            >
+              Submit
+            </Text>
+          </TouchableOpacity>
+          {/* custom amount modal activated when custom amount button is pressed */}
+          <Modal visible={isBudgetModalNestedCustomAmountModalVisible}>
+            <View
+              style={{
+                backgroundColor: "black",
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <View
+                style={{
+                  alignSelf: "flex-start",
+                  position: "absolute",
+                  top: 70,
+                  left: 10,
+                }}
+              >
+                {/* close nested custom budget modal */}
 
+                <Button
+                  title={"Back"}
+                  onPress={handleBudgetModalNestedCustomAmountModalVisible}
+                  color={"white"}
+                />
+                {/* preset options for budget */}
+              </View>
+              <Text style={{ fontSize: 35, fontWeight: "600", margin: 10 }}>
+                {" "}
+                Spending Goal{" "}
+              </Text>
+              <Text
+                style={{
+                  width: "50%",
+                  textAlign: "center",
+                  lineHeight: 20,
+                  marginBottom: 20,
+                }}
+              >
+                Choose from preset amounts or enter a custom amount
+              </Text>
+              <View style={{ position: "relative" }}>
+                <View
+                  style={{
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    backgroundColor: "#ADD8E6",
+                    width: 308,
+                    alignSelf: "center",
+
+                    // alignItems: "center"
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "#000",
+                      fontSize: 18,
+                      fontWeight: "500",
+                      width: 308,
+                      height: 50,
+                      textAlign: "center",
+                      padding: 12,
+                      // padding: 5,
+                    }}
+                  >
+                    Custom Amount
+                  </Text>
+                </View>
+                <TextInput
+                  style={{
+                    height: 90,
+                    // margin: 12
+                    alignSelf: "center",
+                    width: 310,
+                    borderWidth: 1,
+                    padding: 10,
+                    backgroundColor: "#ADD8E6",
+                    textAlign: "center",
+                    fontSize: 40,
+                    borderBottomLeftRadius: 20,
+                    borderBottomRightRadius: 20,
+                  }}
+                  onChangeText={onChangeNumber}
+                  placeholderTextColor="#808080"
+                  placeholder="$"
+                  keyboardType="numeric"
+                />
+                {/* submit button for custom amount */}
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#7a42f4",
+                    padding: 10,
+                    margin: 15,
+                    height: 80,
+                    width: 300,
+                    borderRadius: 20,
+                    justifyContent: "center",
+                  }}
+                  onPress={() => {
+                    setBudget(number);
+                    setIsBudgetModalVisible(false);
+                    setIsBudgetModalNestedCustomAmountModalVisible(false);
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "#fff",
+                      fontSize: 20,
+                      fontWeight: "500",
+                      textAlign: "center",
+                    }}
+                  >
+                    {" "}
+                    Submit{" "}
+                  </Text>
+                </TouchableOpacity>
+                <View style={{ height: 120 }}></View>
+              </View>
+            </View>
           </Modal>
         </View>
       </Modal>
@@ -642,7 +918,8 @@ const handleModal = () =>
             borderTopLeftRadius: 20,
             position: "absolute",
             zIndex: 1,
-            bottom: 100,
+            // width: 310
+            bottom: 110,
           }}
         >
           {/* top -> image and item card with plus/minus */}
@@ -705,20 +982,20 @@ const handleModal = () =>
           {/* add to cart button view for styling */}
           <View
             style={{
-              width: "100%",
+              width: 350,
               alignSelf: "center",
               borderRadius: 20,
               backgroundColor: "blue",
               height: 50,
               justifyContent: "center",
               marginTop: 1,
+              padding: 2,
+              // width: 100
             }}
           >
             {/* for loop taking amount of items to be added and looping through add scannitemstorage to productlist */}
             <Button
-              title={`Add to Cart                                $${
-                scannedItemStorage.price * amountOfProductToAdd
-              }`}
+              title={`Add to Cart                               $${scannedItemStorage.price * amountOfProductToAdd}`}
               onPress={() => {
                 for (let i = 0; i < amountOfProductToAdd; i++) {
                   addScannedItemStorageToProductList();
@@ -749,9 +1026,12 @@ const handleModal = () =>
               color="#fff"
             />
           </View>
+          <View style={{height: 40}}></View>
+
         </View>
       )}
-      {/* <EditScreenInfo path="/screens/TabOneScreen.tsx" /> */}
+              <View style={{height: 190}}></View>
+
     </View>
   );
 }
