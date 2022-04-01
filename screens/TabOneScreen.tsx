@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
+
 import React, { FC, useState, useEffect, ReactElement } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
 // import Overlay from "react-native-modal-overlay";
@@ -33,16 +34,14 @@ export default function TabOneScreen({
   const [currentTotal, setCurrentTotal] = useState(0);
   // estimated tax rate > placeholder as an average tax rate of %6.25
   const [taxRate, setTaxRate] = useState(0.0625);
-//  topcard icon down/up state
-  const [topCardDropDownCaret, setTopCardDropDownCaret] = useState('caret-down')
+  //  topcard icon down/up state
+  const [topCardDropDownCaret, setTopCardDropDownCaret] =
+    useState("caret-down");
   // storage for scanned item information
   // default -> {}
-  const [scannedItemStorage, setScannedItemStorage] = useState({
-  });
+  const [scannedItemStorage, setScannedItemStorage] = useState({});
   // list of user saved items pulled from scan api call -> defualt is empty
-  const [productList, setProductList] = useState([
-   
-  ]);
+  const [productList, setProductList] = useState([]);
   // state for holding color of topcard budget indicator
   const [budgetCardIconColor, setBudgetCardIconColor] = useState("#00ff00");
   // amount of a single scanned item to be added
@@ -56,7 +55,7 @@ export default function TabOneScreen({
   // example fetch for barcode lookup
   // https://api.barcodelookup.com/v3/products?barcode=9780140157376&formatted=y&key=krrps3snh5q72np1iektbej3l34vmb
 
-  // Set budget Modal -> start as true 
+  // Set budget Modal -> start as true
   const [isBudgetModalVisible, setIsBudgetModalVisible] = useState(true);
   // budget modal spending goal view background color array
   const [budgetModalGoalBackGroundColor, setBudgetModalGoalBackGroundColor] =
@@ -84,7 +83,11 @@ export default function TabOneScreen({
     );
   // custom amount use state hook for number input
   const [number, onChangeNumber] = useState(0);
+  // tutorial modal usestate for appearance when users need help with what app does
+  const [isTutorialModalVisible, setIsTutorialModalVisible] = useState(false);
 
+  const handleIsTutorialModalVisible = () =>
+    setIsTutorialModalVisible(() => !isTutorialModalVisible);
   // formula for setting current total state by mapping through items in productlist and adding their price
   const getCurrentTotalFromProductList = () => {
     // variable holding added price as productlist is looped over
@@ -140,7 +143,7 @@ export default function TabOneScreen({
           barcode: data.products[0].barcode_number,
           price: data.products[0].stores[0].price,
         };
-        console.log(newValueToBeStored)
+        console.log(newValueToBeStored);
         // store api request data in state for customer review
         setScannedItemStorage(newValueToBeStored);
         // const productListCopy = [...productList];
@@ -161,9 +164,581 @@ export default function TabOneScreen({
     // set current total with new item added
     getCurrentTotalFromProductList();
     // alert that item has been added
-    alert("Item added to cart!");
+    // alert("Item added to cart!");
     // remove popup so use can continue scanning new items
-    setScanned(false);
+    // setScanned(false);
+  };
+
+  // array holding information for tutorial modal
+  const [tutorialSlideIndex, setTutorialSlideIndex] = useState(0);
+  // function for generating tutorial modal information
+  const generateTutorialModalContent = () => {
+    // starting slide
+    if (tutorialSlideIndex === 0) {
+      return (
+        <View
+          style={{
+            alignSelf: "center",
+            alignContent: "center",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ position: "absolute", top: -70, right: -20 }}>
+            <Button
+              title="Skip"
+              onPress={() => setIsTutorialModalVisible(false)}
+            />
+          </View>
+          <View style={{ height: 100 }}></View>
+          <Ionicons
+            name="cart"
+            style={{ alignItems: "center" }}
+            size={40}
+            color="white"
+          />
+          <View style={{ height: 80 }}></View>
+          <Text
+            style={{
+              alignSelf: "center",
+              justifyContent: "center",
+              fontSize: 30,
+              fontWeight: "600",
+              textAlign: "center",
+              width: 250,
+            }}
+          >
+            Say goodbye{"\n"} to surprises in the {"\n"}checkout line.
+          </Text>
+          <View style={{ height: 120 }}></View>
+          <View
+            style={{
+              flexDirection: "row",
+              height: 40,
+              // width: 20,
+              alignSelf: "center",
+              alignItems: "center",
+              justifyContent: "center",
+              // marginTop: 50,
+              // marginBottom: 50
+            }}
+          >
+            <Ionicons
+              name="radio-button-on"
+              color="#fff"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+          </View>
+          <View style={{ height: 60 }}></View>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#7a42f4",
+              padding: 10,
+              // bottom: -100,
+              // marginTop: 50,
+              margin: 15,
+              height: 80,
+              width: 300,
+              borderRadius: 20,
+              justifyContent: "center",
+            }}
+            onPress={() => {
+              setTutorialSlideIndex(tutorialSlideIndex + 1);
+            }}
+          >
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 20,
+                fontWeight: "500",
+                textAlign: "center",
+              }}
+            >
+              {" "}
+              Take the tour{" "}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+      // spending goal slide
+    } else if (tutorialSlideIndex === 1) {
+      return (
+        <View
+          style={{
+            alignSelf: "center",
+            alignContent: "center",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ position: "absolute", top: -20, left: -20 }}>
+            <Button
+              title="Back"
+              onPress={() => setTutorialSlideIndex(tutorialSlideIndex - 1)}
+            />
+          </View>
+          <View style={{ position: "absolute", top: -20, right: -20 }}>
+            <Button
+              title="Skip"
+              onPress={() => {
+                setTutorialSlideIndex(0);
+                setIsTutorialModalVisible(false);
+              }}
+            />
+          </View>
+          <View style={{ height: 80 }}></View>
+          <Image
+            source={require("../assets/images/SetBudget.jpg")}
+            style={{ height: 400, width: 300, backgroundColor: "#fff" }}
+          />
+          <View style={{ height: 20 }}></View>
+          <Text
+            style={{
+              alignSelf: "center",
+              justifyContent: "center",
+              fontSize: 30,
+              fontWeight: "600",
+              textAlign: "center",
+              width: 250,
+            }}
+          >
+            Create a{"\n"}spending goal
+          </Text>
+          <View style={{ height: 20 }}></View>
+          <View
+            style={{
+              flexDirection: "row",
+              height: 40,
+              // width: 20,
+              alignSelf: "center",
+              alignItems: "center",
+              justifyContent: "center",
+              // marginTop: 50,
+              // marginBottom: 50
+            }}
+          >
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-on"
+              color="#fff"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+          </View>
+          <View style={{ height: 30 }}></View>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#7a42f4",
+              padding: 10,
+              // bottom: -100,
+              // marginTop: 50,
+              margin: 15,
+              height: 80,
+              width: 300,
+              borderRadius: 20,
+              justifyContent: "center",
+            }}
+            onPress={() => {
+              setTutorialSlideIndex(tutorialSlideIndex + 1);
+            }}
+          >
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 20,
+                fontWeight: "500",
+                textAlign: "center",
+              }}
+            >
+              {" "}
+              Next{" "}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (tutorialSlideIndex===2){
+      return (
+        <View
+          style={{
+            alignSelf: "center",
+            alignContent: "center",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ position: "absolute", top: -20, left: -20 }}>
+            <Button
+              title="Back"
+              onPress={() => setTutorialSlideIndex(tutorialSlideIndex - 1)}
+            />
+          </View>
+          <View style={{ position: "absolute", top: -20, right: -20 }}>
+            <Button
+              title="Skip"
+              onPress={() => {
+                setTutorialSlideIndex(0);
+                setIsTutorialModalVisible(false);
+              }}
+            />
+          </View>
+          <View style={{ height: 80 }}></View>
+          <Image
+            source={require("../assets/images/ScanOnTheGo.jpg")}
+            style={{ height: 400, width: 300, backgroundColor: "#fff", alignContent: "center" }}
+          />
+          <View style={{ height: 20 }}></View>
+          <Text
+            style={{
+              alignSelf: "center",
+              justifyContent: "center",
+              fontSize: 30,
+              fontWeight: "600",
+              textAlign: "center",
+              width: 250,
+            }}
+          >
+            Scan items as{"\n"}you go
+          </Text>
+          <View style={{ height: 20 }}></View>
+          <View
+            style={{
+              flexDirection: "row",
+              height: 40,
+              // width: 20,
+              alignSelf: "center",
+              alignItems: "center",
+              justifyContent: "center",
+              // marginTop: 50,
+              // marginBottom: 50
+            }}
+          >
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-on"
+              color="#fff"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+          </View>
+          <View style={{ height: 30 }}></View>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#7a42f4",
+              padding: 10,
+              // bottom: -100,
+              // marginTop: 50,
+              margin: 15,
+              height: 80,
+              width: 300,
+              borderRadius: 20,
+              justifyContent: "center",
+            }}
+            onPress={() => {
+              setTutorialSlideIndex(tutorialSlideIndex + 1);
+            }}
+          >
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 20,
+                fontWeight: "500",
+                textAlign: "center",
+              }}
+            >
+              {" "}
+              Next{" "}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (tutorialSlideIndex===3){
+      return (
+        <View
+          style={{
+            alignSelf: "center",
+            alignContent: "center",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ position: "absolute", top: -20, left: -20 }}>
+            <Button
+              title="Back"
+              onPress={() => setTutorialSlideIndex(tutorialSlideIndex - 1)}
+            />
+          </View>
+          <View style={{ position: "absolute", top: -20, right: -20 }}>
+            <Button
+              title="Skip"
+              onPress={() => {
+                setTutorialSlideIndex(0);
+                setIsTutorialModalVisible(false);
+              }}
+            />
+          </View>
+          <View style={{ height: 80 }}></View>
+          <Image
+            source={require("../assets/images/KeepTrack.jpg")}
+            style={{ height: 400, width: 300, backgroundColor: "#fff" }}
+          />
+          <View style={{ height: 20 }}></View>
+          <Text
+            style={{
+              alignSelf: "center",
+              justifyContent: "center",
+              fontSize: 30,
+              fontWeight: "600",
+              textAlign: "center",
+              width: 250,
+            }}
+          >
+            Keep track{"\n"}while you shop
+          </Text>
+          <View style={{ height: 20 }}></View>
+          <View
+            style={{
+              flexDirection: "row",
+              height: 40,
+              // width: 20,
+              alignSelf: "center",
+              alignItems: "center",
+              justifyContent: "center",
+              // marginTop: 50,
+              // marginBottom: 50
+            }}
+          >
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-on"
+              color="#fff"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+          </View>
+          <View style={{ height: 30 }}></View>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#7a42f4",
+              padding: 10,
+              // bottom: -100,
+              // marginTop: 50,
+              margin: 15,
+              height: 80,
+              width: 300,
+              borderRadius: 20,
+              justifyContent: "center",
+            }}
+            onPress={() => {
+              setTutorialSlideIndex(tutorialSlideIndex + 1);
+            }}
+          >
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 20,
+                fontWeight: "500",
+                textAlign: "center",
+              }}
+            >
+              {" "}
+              Next{" "}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (tutorialSlideIndex===4){
+      return (
+        <View
+          style={{
+            alignSelf: "center",
+            alignContent: "center",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ position: "absolute", top: -20, left: -20 }}>
+            <Button
+              title="Back"
+              onPress={() => setTutorialSlideIndex(tutorialSlideIndex - 1)}
+            />
+          </View>
+          <View style={{ position: "absolute", top: -20, right: -20 }}>
+            <Button
+              title="Skip"
+              onPress={() => {
+                setTutorialSlideIndex(0);
+                setIsTutorialModalVisible(false);
+              }}
+            />
+          </View>
+          <View style={{ height: 80 }}></View>
+          <View
+            style={{ height: 190, width: 300, backgroundColor: "#000" }}
+          />
+          <Ionicons name="thumbs-up-sharp" color={"#fff"} size={35}/>
+          <View style={{ height: 60 }}></View>
+          <Text
+            style={{
+              alignSelf: "center",
+              justifyContent: "center",
+              fontSize: 30,
+              fontWeight: "600",
+              textAlign: "center",
+              width: 250,
+            }}
+          >
+            Ready?
+          </Text>
+            <View
+              style={{ height: 130, width: 300, backgroundColor: "#000" }}
+            />
+          <View style={{ height: 20 }}></View>
+          <View
+            style={{
+              flexDirection: "row",
+              height: 40,
+              // width: 20,
+              alignSelf: "center",
+              alignItems: "center",
+              justifyContent: "center",
+              // marginTop: 50,
+              // marginBottom: 50
+            }}
+          >
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-off"
+              color="white"
+              style={{ margin: 5 }}
+            />
+            <Ionicons
+              name="radio-button-on"
+              color="#fff"
+              style={{ margin: 5 }}
+            />
+          </View>
+          <View style={{ height: 30 }}></View>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#7a42f4",
+              padding: 10,
+              // bottom: -100,
+              // marginTop: 50,
+              margin: 15,
+              height: 80,
+              width: 300,
+              borderRadius: 20,
+              justifyContent: "center",
+            }}
+            onPress={() => {
+              setIsTutorialModalVisible(false)
+              setIsBudgetModalVisible(true)
+              setTutorialSlideIndex(0);
+            }}
+          >
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 20,
+                fontWeight: "500",
+                textAlign: "center",
+              }}
+            >
+              {" "}
+              Let's do this{" "}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
   };
 
   // request camera permission
@@ -171,7 +746,6 @@ export default function TabOneScreen({
     askForCameraPermission();
     // setIsBudgetModalVisible(true)
     getCurrentTotalFromProductList();
-
   }, []);
 
   // for tutorial screens we could refactor and duplicate the nav feature at the bottom of the app with links to each other and then a skip that sends to scan page and an endpoint next button that also sends ot scan page.
@@ -220,14 +794,9 @@ export default function TabOneScreen({
 
     const toggleDropdown = () => {
       setVisible(!visible);
-     
     };
     // what is rendered when topcard with budget info is pressed -> maps over productlist and returns small cards
     const renderDropdown = () => {
-      
-      
-       
-      
       if (visible) {
         // setTopCardDropDownCaret("caret-down")
         return (
@@ -235,12 +804,12 @@ export default function TabOneScreen({
           <View
             style={{
               position: "absolute",
-              backgroundColor: 'rgba(52, 52, 52, 0)',
+              backgroundColor: "rgba(52, 52, 52, 0)",
               top: 75,
               zIndex: 2,
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
-              width: '100%'
+              width: "100%",
               // borderBottomLeftRadius: 20,
               // borderBottomRightRadius: 20,
             }}
@@ -257,18 +826,25 @@ export default function TabOneScreen({
                 justifyContent: "center",
               }}
             > */}
-              {/* <Text style={{ color: "#000", fontSize: 25, fontWeight: "600" }}>
+            {/* <Text style={{ color: "#000", fontSize: 25, fontWeight: "600" }}>
                 Cart
               </Text> */}
             {/* </View> */}
             {/* product list allitems view */}
-            <View style={{backgroundColor: "#fff",borderTopLeftRadius: 20,borderTopRightRadius: 20, height: 10}}></View>
+            <View
+              style={{
+                backgroundColor: "#fff",
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                height: 10,
+              }}
+            ></View>
 
             <View
               style={{
                 borderBottomLeftRadius: 20,
                 borderBottomRightRadius: 20,
-                
+
                 backgroundColor: "#fff",
                 // height: 50,
                 // width: 400
@@ -310,7 +886,7 @@ export default function TabOneScreen({
                       {item.title}
                     </Text>
                     <Text style={{ color: "#000", alignSelf: "center" }}>
-                      ${parseFloat(item.price)}
+                      ${parseFloat(item.price).toFixed(2)}
                     </Text>
                     <View
                       style={{
@@ -326,7 +902,15 @@ export default function TabOneScreen({
               })}
             </View>
 
-            <View style={{backgroundColor: "#fff",borderBottomLeftRadius: 20,borderBottomRightRadius: 20, height: 10, marginTop: 1}}></View>
+            <View
+              style={{
+                backgroundColor: "#fff",
+                borderBottomLeftRadius: 20,
+                borderBottomRightRadius: 20,
+                height: 10,
+                marginTop: 1,
+              }}
+            ></View>
 
             {/* details card underneath productlist */}
             <View
@@ -892,7 +1476,21 @@ export default function TabOneScreen({
           </Modal>
         </View>
       </Modal>
-
+      {/* bottom right hand icon for information about the app */}
+      <View style={{ position: "absolute", bottom: 20, right: 20 }}>
+        <Ionicons
+          name="information-circle-sharp"
+          color={"white"}
+          size={32}
+          onPress={handleIsTutorialModalVisible}
+        />
+      </View>
+      {/* explanation on how to use app */}
+      <Modal visible={isTutorialModalVisible}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          {generateTutorialModalContent()}
+        </View>
+      </Modal>
       <View
         style={styles.separator}
         lightColor="#eee"
@@ -992,12 +1590,21 @@ export default function TabOneScreen({
           >
             {/* for loop taking amount of items to be added and looping through add scannitemstorage to productlist */}
             <Button
-              title={`Add to Cart                               $${scannedItemStorage.price * amountOfProductToAdd}`}
+              title={`Add to Cart                               $${
+                scannedItemStorage.price * amountOfProductToAdd
+              }`}
               onPress={() => {
+                let productListCopy = [...productList];
                 for (let i = 0; i < amountOfProductToAdd; i++) {
-                  addScannedItemStorageToProductList();
+                  // add scanned item info from scannedItemStorage to product list copy
+                  productListCopy.push(scannedItemStorage);
+                  // set product list state as updated list
+                  setProductList(productListCopy);
+                  // set current total with new item added
                 }
+                setScannedItemStorage({});
                 setScanned(false);
+                getCurrentTotalFromProductList();
               }}
               color="#fff"
             />
@@ -1023,12 +1630,10 @@ export default function TabOneScreen({
               color="#fff"
             />
           </View>
-          <View style={{height: 40}}></View>
-
+          <View style={{ height: 40 }}></View>
         </View>
       )}
-              <View style={{height: 190}}></View>
-
+      <View style={{ height: 190 }}></View>
     </View>
   );
 }
