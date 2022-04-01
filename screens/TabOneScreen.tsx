@@ -25,7 +25,7 @@ export default function TabOneScreen({
 }: RootTabScreenProps<"TabOne">) {
   const [hasPermission, setHasPermission] = useState(null);
   // default false
-  const [scanned, setScanned] = useState(true);
+  const [scanned, setScanned] = useState(false);
   const [text, setText] = useState("Not yet scanned");
   // usestate for current budget
   const [budget, setBudget] = useState(10);
@@ -33,34 +33,15 @@ export default function TabOneScreen({
   const [currentTotal, setCurrentTotal] = useState(0);
   // estimated tax rate > placeholder as an average tax rate of %6.25
   const [taxRate, setTaxRate] = useState(0.0625);
+//  topcard icon down/up state
+  const [topCardDropDownCaret, setTopCardDropDownCaret] = useState('caret-down')
   // storage for scanned item information
   // default -> {}
   const [scannedItemStorage, setScannedItemStorage] = useState({
-    barcode: "766218109216",
-    description:
-      "Whether you are starting a DIY project, creating unique gifts or upcycling various odds and ends this highly-pigmented Americana Acrylic Color is ideal for decorative painting, home decor and general craft projects. The vibrant, rich acrylic color blends easily with others in the Americana line, producing smooth, creamy colors that dry to a durable matte finish. Transform a variety of surfaces including wood, canvas, plaster, resins, papier mache, candles, walls, fabric, leather, Styrofoam, ceramic bisque, polymer clay, paper, poster board, metal and more.",
-    image: "https://images.barcodelookup.com/9614/96144763-1.jpg",
-    price: "9.99",
-    title: "DecoArt Americana Acrylic Color, 16 Oz., Slate Gray",
   });
   // list of user saved items pulled from scan api call -> defualt is empty
   const [productList, setProductList] = useState([
-    {
-      barcode: "766218109223",
-      description:
-        "Whether you are starting a DIY project, creating unique gifts or upcycling various odds and ends this highly-pigmented Americana Acrylic Color is ideal for decorative painting, home decor and general craft projects. The vibrant, rich acrylic color blends easily with others in the Americana line, producing smooth, creamy colors that dry to a durable matte finish. Transform a variety of surfaces including wood, canvas, plaster, resins, papier mache, candles, walls, fabric, leather, Styrofoam, ceramic bisque, polymer clay, paper, poster board, metal and more.",
-      image: "https://images.barcodelookup.com/9614/96144763-1.jpg",
-      price: "9.99",
-      title: "DecoArt Americana Acrylic Color, 16 Oz., Slate Gray",
-    },
-    {
-      barcode: "766218109225",
-      description:
-        "Whether you are starting a DIY project, creating unique gifts or upcycling various odds and ends this highly-pigmented Americana Acrylic Color is ideal for decorative painting, home decor and general craft projects. The vibrant, rich acrylic color blends easily with others in the Americana line, producing smooth, creamy colors that dry to a durable matte finish. Transform a variety of surfaces including wood, canvas, plaster, resins, papier mache, candles, walls, fabric, leather, Styrofoam, ceramic bisque, polymer clay, paper, poster board, metal and more.",
-      image: "https://images.barcodelookup.com/9614/96144763-1.jpg",
-      price: "9.99",
-      title: "DecoArt Americana Acrylic Color, 16 Oz., Bright White",
-    },
+   
   ]);
   // state for holding color of topcard budget indicator
   const [budgetCardIconColor, setBudgetCardIconColor] = useState("#00ff00");
@@ -70,13 +51,13 @@ export default function TabOneScreen({
   const [visible, setVisible] = useState(false);
   // urls for api call
   const baseUrl = "https://api.barcodelookup.com/v3/products?barcode=";
-  const apiKey = "&formatted=y&key=krrps3snh5q72np1iektbej3l34vmb";
+  const apiKey = "&formatted=y&key=5nj8e8eiih06xvnv64mq4ew5i38vpb";
 
   // example fetch for barcode lookup
   // https://api.barcodelookup.com/v3/products?barcode=9780140157376&formatted=y&key=krrps3snh5q72np1iektbej3l34vmb
 
-  // Set budget Modal
-  const [isBudgetModalVisible, setIsBudgetModalVisible] = useState(false);
+  // Set budget Modal -> start as true 
+  const [isBudgetModalVisible, setIsBudgetModalVisible] = useState(true);
   // budget modal spending goal view background color array
   const [budgetModalGoalBackGroundColor, setBudgetModalGoalBackGroundColor] =
     useState(["#ADD8E6", "#ADD8E6", "#ADD8E6", "#ADD8E6", "#ADD8E6"]);
@@ -159,7 +140,7 @@ export default function TabOneScreen({
           barcode: data.products[0].barcode_number,
           price: data.products[0].stores[0].price,
         };
-        // console.log(newValueToBeStored)
+        console.log(newValueToBeStored)
         // store api request data in state for customer review
         setScannedItemStorage(newValueToBeStored);
         // const productListCopy = [...productList];
@@ -188,7 +169,9 @@ export default function TabOneScreen({
   // request camera permission
   useEffect(() => {
     askForCameraPermission();
+    // setIsBudgetModalVisible(true)
     getCurrentTotalFromProductList();
+
   }, []);
 
   // for tutorial screens we could refactor and duplicate the nav feature at the bottom of the app with links to each other and then a skip that sends to scan page and an endpoint next button that also sends ot scan page.
@@ -237,26 +220,33 @@ export default function TabOneScreen({
 
     const toggleDropdown = () => {
       setVisible(!visible);
+     
     };
     // what is rendered when topcard with budget info is pressed -> maps over productlist and returns small cards
     const renderDropdown = () => {
+      
+      
+       
+      
       if (visible) {
+        // setTopCardDropDownCaret("caret-down")
         return (
           // view encapsulating all items in productlist
           <View
             style={{
               position: "absolute",
-              backgroundColor: "#000",
+              backgroundColor: 'rgba(52, 52, 52, 0)',
               top: 75,
               zIndex: 2,
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
+              width: '100%'
               // borderBottomLeftRadius: 20,
               // borderBottomRightRadius: 20,
             }}
           >
             {/* productlist top wrapper  */}
-            <View
+            {/* <View
               style={{
                 borderTopLeftRadius: 20,
                 borderTopRightRadius: 20,
@@ -266,16 +256,19 @@ export default function TabOneScreen({
                 alignItems: "center",
                 justifyContent: "center",
               }}
-            >
-              <Text style={{ color: "#000", fontSize: 25, fontWeight: "600" }}>
+            > */}
+              {/* <Text style={{ color: "#000", fontSize: 25, fontWeight: "600" }}>
                 Cart
-              </Text>
-            </View>
+              </Text> */}
+            {/* </View> */}
             {/* product list allitems view */}
+            <View style={{backgroundColor: "#fff",borderTopLeftRadius: 20,borderTopRightRadius: 20, height: 10}}></View>
+
             <View
               style={{
                 borderBottomLeftRadius: 20,
                 borderBottomRightRadius: 20,
+                
                 backgroundColor: "#fff",
                 // height: 50,
                 // width: 400
@@ -296,8 +289,9 @@ export default function TabOneScreen({
                       flex: 1,
                       flexDirection: "row",
                       padding: 6,
-                      borderBottomLeftRadius: 20,
-                      borderBottomRightRadius: 20,
+                      // borderRadius: 20,
+                      // borderBottomLeftRadius: 20,
+                      // borderBottomRightRadius: 20,
                     }}
                     key={index}
                   >
@@ -331,6 +325,9 @@ export default function TabOneScreen({
                 );
               })}
             </View>
+
+            <View style={{backgroundColor: "#fff",borderBottomLeftRadius: 20,borderBottomRightRadius: 20, height: 10, marginTop: 1}}></View>
+
             {/* details card underneath productlist */}
             <View
               style={{
@@ -499,7 +496,7 @@ export default function TabOneScreen({
               justifyContent: "center",
             }}
           >
-            <Ionicons name="caret-down" size={32} color="black" />
+            <Ionicons name={topCardDropDownCaret} size={32} color="black" />
           </View>
         </View>
 
