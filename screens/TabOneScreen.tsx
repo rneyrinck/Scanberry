@@ -1588,6 +1588,9 @@ export default function TabOneScreen({
               // width: 100
             }}
           >
+
+
+            
             {/* for loop taking amount of items to be added and looping through add scannitemstorage to productlist */}
             <Button
               title={`Add to Cart                               $${
@@ -1595,16 +1598,18 @@ export default function TabOneScreen({
               }`}
               onPress={() => {
                 let productListCopy = [...productList];
+                let priceToAdd = (scannedItemStorage.price)*taxRate
                 for (let i = 0; i < amountOfProductToAdd; i++) {
                   // add scanned item info from scannedItemStorage to product list copy
                   productListCopy.push(scannedItemStorage);
                   // set product list state as updated list
                   setProductList(productListCopy);
                   // set current total with new item added
+                  setCurrentTotal(currentTotal+priceToAdd)
                 }
+                // getCurrentTotalFromProductList();
                 setScannedItemStorage({});
                 setScanned(false);
-                getCurrentTotalFromProductList();
               }}
               color="#fff"
             />
