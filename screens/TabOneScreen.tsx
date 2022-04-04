@@ -155,21 +155,6 @@ export default function TabOneScreen({
   // not sure if this needs to be called or can be deleted
 
 
-  // Add scannedItemStorage data to productList -> called when button "add to cart" in popup when item is scanned is pressed
-  const addScannedItemStorageToProductList = () => {
-    // copy current productlist contents as variable
-    let productListCopy = [...productList];
-    // add scanned item info from scannedItemStorage to product list copy
-    productListCopy.push(scannedItemStorage);
-    // set product list state as updated list
-    setProductList(productListCopy);
-    // set current total with new item added
-    getCurrentTotalFromProductList();
-    // alert that item has been added
-    // alert("Item added to cart!");
-    // remove popup so use can continue scanning new items
-    // setScanned(false);
-  };
 
   // array holding information for tutorial modal
   const [tutorialSlideIndex, setTutorialSlideIndex] = useState(0);
