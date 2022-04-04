@@ -24,9 +24,12 @@ import { Ionicons } from "@expo/vector-icons";
 export default function TabOneScreen({
   navigation,
 }: RootTabScreenProps<"TabOne">) {
+  // camera permission
   const [hasPermission, setHasPermission] = useState(null);
-  // default false
+  // boolean for if scanner has stored information
+  // default = false
   const [scanned, setScanned] = useState(false);
+  // text indicating barcode has scanned item
   const [text, setText] = useState("Not yet scanned");
   // usestate for current budget
   const [budget, setBudget] = useState(10);
@@ -68,6 +71,7 @@ export default function TabOneScreen({
     "#000000",
     "#000000",
   ]);
+  // set budget modal function
   const handleModal = () =>
     setIsBudgetModalVisible(() => !isBudgetModalVisible);
 
@@ -76,7 +80,7 @@ export default function TabOneScreen({
     isBudgetModalNestedCustomAmountModalVisible,
     setIsBudgetModalNestedCustomAmountModalVisible,
   ] = useState(false);
-
+  // custom amount input modal
   const handleBudgetModalNestedCustomAmountModalVisible = () =>
     setIsBudgetModalNestedCustomAmountModalVisible(
       () => !isBudgetModalNestedCustomAmountModalVisible
@@ -85,7 +89,7 @@ export default function TabOneScreen({
   const [number, onChangeNumber] = useState(0);
   // tutorial modal usestate for appearance when users need help with what app does
   const [isTutorialModalVisible, setIsTutorialModalVisible] = useState(false);
-
+  // tutorial screen modal
   const handleIsTutorialModalVisible = () =>
     setIsTutorialModalVisible(() => !isTutorialModalVisible);
   // formula for setting current total state by mapping through items in productlist and adding their price
@@ -112,10 +116,9 @@ export default function TabOneScreen({
       setBudgetCardIconColor("#00ff00");
       return `$${(budget - currentTotal).toFixed(2)} under budget`;
     }
-    // console.log("get current total");
   };
 
-  // setting up permissions
+  // setting up permissions for camera use
   const askForCameraPermission = () => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -131,7 +134,6 @@ export default function TabOneScreen({
       // api call is formated in object{product(Array)[0].key/value}
       .then((res) => res.json())
       // correct data call\\/\/\/
-      // .then(data=>{console.log(data.products[0].images[0])})
       .then((data) => {
         // declare placeholder for information from data that we want to isolate
         let newValueToBeStored = {};
@@ -143,16 +145,16 @@ export default function TabOneScreen({
           barcode: data.products[0].barcode_number,
           price: data.products[0].stores[0].price,
         };
-        console.log(newValueToBeStored);
         // store api request data in state for customer review
         setScannedItemStorage(newValueToBeStored);
-        // const productListCopy = [...productList];
-        // productListCopy.push();
       })
-      // .then(() => console.log(scannedItemStorage))
+
       .catch((err) => console.log(err));
   };
-  // console.log(scannedItemStorage);
+
+  // not sure if this needs to be called or can be deleted
+
+
   // Add scannedItemStorage data to productList -> called when button "add to cart" in popup when item is scanned is pressed
   const addScannedItemStorageToProductList = () => {
     // copy current productlist contents as variable
@@ -173,7 +175,7 @@ export default function TabOneScreen({
   const [tutorialSlideIndex, setTutorialSlideIndex] = useState(0);
   // function for generating tutorial modal information
   const generateTutorialModalContent = () => {
-    // starting slide
+    // starting slide -> similar functionality accross five slides===notes on the first and on changes in each
     if (tutorialSlideIndex === 0) {
       return (
         <View
@@ -184,19 +186,23 @@ export default function TabOneScreen({
             justifyContent: "center",
           }}
         >
+          {/* skip button sends user to scan page */}
           <View style={{ position: "absolute", top: -70, right: -20 }}>
             <Button
               title="Skip"
               onPress={() => setIsTutorialModalVisible(false)}
             />
           </View>
+          {/* spacer */}
           <View style={{ height: 100 }}></View>
+          {/* simple icon */}
           <Ionicons
             name="cart"
             style={{ alignItems: "center" }}
             size={40}
             color="white"
           />
+          {/* spacer */}
           <View style={{ height: 80 }}></View>
           <Text
             style={{
@@ -210,19 +216,19 @@ export default function TabOneScreen({
           >
             Say goodbye{"\n"} to surprises in the {"\n"}checkout line.
           </Text>
+          {/* spacer */}
           <View style={{ height: 120 }}></View>
+          {/* Radio buttons used as a way for usuers to visualize what tutorial screen theyre on(keeps them engaged by knowing the length of the tutorial) */}
           <View
             style={{
               flexDirection: "row",
               height: 40,
-              // width: 20,
               alignSelf: "center",
               alignItems: "center",
               justifyContent: "center",
-              // marginTop: 50,
-              // marginBottom: 50
             }}
           >
+            {/* radio-button-on indicates the selected tutorial screen --- switches based on the index of 0-4 for what page user is on */}
             <Ionicons
               name="radio-button-on"
               color="#fff"
@@ -249,7 +255,9 @@ export default function TabOneScreen({
               style={{ margin: 5 }}
             />
           </View>
+          {/* spacer */}
           <View style={{ height: 60 }}></View>
+          {/* button sending user to next page or closes modal if it the last page */}
           <TouchableOpacity
             style={{
               backgroundColor: "#7a42f4",
@@ -280,7 +288,7 @@ export default function TabOneScreen({
           </TouchableOpacity>
         </View>
       );
-      // spending goal slide
+      // spending goal slide -> back button appears on subsequent slides to send user back one slide, contains image showing user what to expect and how to use the app
     } else if (tutorialSlideIndex === 1) {
       return (
         <View
@@ -394,7 +402,7 @@ export default function TabOneScreen({
           </TouchableOpacity>
         </View>
       );
-    } else if (tutorialSlideIndex===2){
+    } else if (tutorialSlideIndex === 2) {
       return (
         <View
           style={{
@@ -422,7 +430,12 @@ export default function TabOneScreen({
           <View style={{ height: 80 }}></View>
           <Image
             source={require("../assets/images/ScanOnTheGo.jpg")}
-            style={{ height: 400, width: 300, backgroundColor: "#fff", alignContent: "center" }}
+            style={{
+              height: 400,
+              width: 300,
+              backgroundColor: "#fff",
+              alignContent: "center",
+            }}
           />
           <View style={{ height: 20 }}></View>
           <Text
@@ -507,7 +520,7 @@ export default function TabOneScreen({
           </TouchableOpacity>
         </View>
       );
-    } else if (tutorialSlideIndex===3){
+    } else if (tutorialSlideIndex === 3) {
       return (
         <View
           style={{
@@ -620,7 +633,8 @@ export default function TabOneScreen({
           </TouchableOpacity>
         </View>
       );
-    } else if (tutorialSlideIndex===4){
+      // final page most similar to first -> "next" button closes modal and opens set budget modal
+    } else if (tutorialSlideIndex === 4) {
       return (
         <View
           style={{
@@ -646,10 +660,8 @@ export default function TabOneScreen({
             />
           </View>
           <View style={{ height: 80 }}></View>
-          <View
-            style={{ height: 190, width: 300, backgroundColor: "#000" }}
-          />
-          <Ionicons name="thumbs-up-sharp" color={"#fff"} size={35}/>
+          <View style={{ height: 190, width: 300, backgroundColor: "#000" }} />
+          <Ionicons name="thumbs-up-sharp" color={"#fff"} size={35} />
           <View style={{ height: 60 }}></View>
           <Text
             style={{
@@ -663,9 +675,7 @@ export default function TabOneScreen({
           >
             Ready?
           </Text>
-            <View
-              style={{ height: 130, width: 300, backgroundColor: "#000" }}
-            />
+          <View style={{ height: 130, width: 300, backgroundColor: "#000" }} />
           <View style={{ height: 20 }}></View>
           <View
             style={{
@@ -719,8 +729,8 @@ export default function TabOneScreen({
               justifyContent: "center",
             }}
             onPress={() => {
-              setIsTutorialModalVisible(false)
-              setIsBudgetModalVisible(true)
+              setIsTutorialModalVisible(false);
+              setIsBudgetModalVisible(true);
               setTutorialSlideIndex(0);
             }}
           >
@@ -744,27 +754,17 @@ export default function TabOneScreen({
   // request camera permission
   useEffect(() => {
     askForCameraPermission();
-    // setIsBudgetModalVisible(true)
     getCurrentTotalFromProductList();
   }, []);
 
-  // for tutorial screens we could refactor and duplicate the nav feature at the bottom of the app with links to each other and then a skip that sends to scan page and an endpoint next button that also sends ot scan page.
-
-  // need component for top bar that displays budget in colored card, current total of items in cart, and comparison amount of where current is to budget ($15 under budget)
-  // this component has dropdown for detail view, could refactor modal screen to serve this purpose with a prop, or avoid dealing with transfering state at the moment and build everything on this screen
-
-  // ***need to add pop up when scanned that displays scanned item storage info and will hold the scan again button and the add to cart button
-  // pop up shows preview of item with 'added to total', a preview total button(link to dropdown list), and a dismiss button(back to scanning)
-  // ***popup should have option for adding specific amount of same item to productlist. Coulkd be done with a new key/value that gets adjusted based on the popup and then at the checkout itll factor price X amount of that object?
   // what happens when we scan bar code
   function handleBarCodeScanned({ type, data }) {
     setScanned(true);
-    // setText("add to cart?");
     getInfoFromBarCode(data);
     console.log("Type: " + type + "\nData: " + data);
   }
 
-  // check permission and return the screeens
+  // check permission and return the screens
   if (hasPermission === null) {
     return (
       <View style={styles.container}>
@@ -784,7 +784,7 @@ export default function TabOneScreen({
       </View>
     );
   }
-
+  // dropdown for the top budget card in scanning page
   interface Props {
     label: string;
   }
@@ -798,7 +798,6 @@ export default function TabOneScreen({
     // what is rendered when topcard with budget info is pressed -> maps over productlist and returns small cards
     const renderDropdown = () => {
       if (visible) {
-        // setTopCardDropDownCaret("caret-down")
         return (
           // view encapsulating all items in productlist
           <View
@@ -810,27 +809,8 @@ export default function TabOneScreen({
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
               width: "100%",
-              // borderBottomLeftRadius: 20,
-              // borderBottomRightRadius: 20,
             }}
           >
-            {/* productlist top wrapper  */}
-            {/* <View
-              style={{
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-                backgroundColor: "#ADD8E6",
-                height: 50,
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            > */}
-            {/* <Text style={{ color: "#000", fontSize: 25, fontWeight: "600" }}>
-                Cart
-              </Text> */}
-            {/* </View> */}
-            {/* product list allitems view */}
             <View
               style={{
                 backgroundColor: "#fff",
@@ -846,16 +826,10 @@ export default function TabOneScreen({
                 borderBottomRightRadius: 20,
 
                 backgroundColor: "#fff",
-                // height: 50,
-                // width: 400
-                // zIndex:
-                // borderColor: "#00ff00",
-                // borderWidth: 5
               }}
             >
               {/* mapping through list to create item cards */}
               {productList.map((item, index) => {
-                // console.log(item.title);
                 return (
                   // productlist single itemcard
                   <View
@@ -865,16 +839,15 @@ export default function TabOneScreen({
                       flex: 1,
                       flexDirection: "row",
                       padding: 6,
-                      // borderRadius: 20,
-                      // borderBottomLeftRadius: 20,
-                      // borderBottomRightRadius: 20,
                     }}
                     key={index}
                   >
+                    {/* item image */}
                     <Image
                       source={{ uri: item.image }}
                       style={{ width: 50, height: 50 }}
                     />
+                    {/* title */}
                     <Text
                       style={{
                         color: "#000",
@@ -885,9 +858,11 @@ export default function TabOneScreen({
                     >
                       {item.title}
                     </Text>
+                    {/* price */}
                     <Text style={{ color: "#000", alignSelf: "center" }}>
                       ${parseFloat(item.price).toFixed(2)}
                     </Text>
+                    {/* spacer */}
                     <View
                       style={{
                         height: 1,
@@ -901,7 +876,7 @@ export default function TabOneScreen({
                 );
               })}
             </View>
-
+            {/* beveled view to give list borderradius of 20 */}
             <View
               style={{
                 backgroundColor: "#fff",
@@ -935,6 +910,7 @@ export default function TabOneScreen({
                   alignItems: "center",
                 }}
               >
+                {/* totals breakdown */}
                 <Text style={{ color: "#000" }}>Taxes</Text>
 
                 <Text style={{ color: "#000" }}>
@@ -993,10 +969,11 @@ export default function TabOneScreen({
                   paddingTop: 5,
                 }}
               >
+                {/* percentage of budget === current total divided by budget */}
                 <Text style={{ color: "#000" }}>
                   {((currentTotal / budget) * 100).toFixed(0)}% of spending goal
                 </Text>
-
+                {/* edit bduget */}
                 <Button title={"Edit"} onPress={handleModal} />
               </View>
             </View>
@@ -1025,7 +1002,6 @@ export default function TabOneScreen({
         <View
           style={{
             backgroundColor: "#fff",
-            // top: 5,
             zIndex: 2,
             flexWrap: "wrap",
             flexDirection: "row",
@@ -1035,15 +1011,11 @@ export default function TabOneScreen({
           {/* topcard colored budget indicator icon */}
           <View
             style={{
-              // borderBottomColor: '#fff',
-              // zIndex: 8,
               borderRadius: 20,
               height: 60,
               width: 60,
               backgroundColor: budgetCardIconColor,
-              // margin: 0,
               justifyContent: "center",
-              // alignContent: "center",
               alignItems: "center",
             }}
           >
@@ -1085,7 +1057,6 @@ export default function TabOneScreen({
         </View>
 
         <Text style={styles.buttonText}></Text>
-        {/* <Icon type='font-awesome' name='chevron-down'/> */}
       </TouchableOpacity>
     );
   };
@@ -1093,10 +1064,10 @@ export default function TabOneScreen({
   // return the updated view after scan
   return (
     <View style={styles.container}>
+      {/* bubdget dropdown card */}
       <Dropdown label={`ProductList`} />
-      {/* <Dropdown label="Productlist" /> */}
-      {/* <Button title="modal" onPress={handleModal} /> */}
-      {/* set budget modal -> here temporarily */}
+
+      {/* set budget modal opens on edit button in budget dropdown card */}
       <Modal visible={isBudgetModalVisible}>
         <View
           style={{
@@ -1134,6 +1105,7 @@ export default function TabOneScreen({
           {/* each of these following five views contains a button with an onPress function that changes the backgroundcolor, button text color, and sets bugdet(except for custom amount) */}
 
           {/* view with background color as state in array with each view/button group corresponding indescending order to their index in budgetModalBackgroundColor useState array */}
+          {/* $20.00 button */}
           <View
             style={{
               margin: 1,
@@ -1146,6 +1118,7 @@ export default function TabOneScreen({
               borderTopRightRadius: 20,
             }}
           >
+            {/* all buttons are similar with only chagnes being their correlation to the use state arrays for font color and background color changing */}
             {/* button with text color as array item (color code) on press changes the index corresponding to the button in descending order of all five buttons and changes everything else back to default light blue bacckground black font color */}
             <Button
               title="$20.00"
@@ -1180,6 +1153,7 @@ export default function TabOneScreen({
               }}
             />
           </View>
+          {/* $40.00 button */}
           <View
             style={{
               margin: 1,
@@ -1216,6 +1190,7 @@ export default function TabOneScreen({
               }}
             />
           </View>
+          {/* $60.00 button */}
           <View
             style={{
               margin: 1,
@@ -1252,6 +1227,7 @@ export default function TabOneScreen({
               }}
             />
           </View>
+          {/* $80.00 button */}
           <View
             style={{
               margin: 1,
@@ -1288,6 +1264,7 @@ export default function TabOneScreen({
               }}
             />
           </View>
+          {/* set custom amount button --- opens integerinput modal */}
           <View
             style={{
               margin: 1,
@@ -1338,9 +1315,7 @@ export default function TabOneScreen({
               justifyContent: "center",
             }}
             onPress={() => {
-              // setBudget(number)
               setIsBudgetModalVisible(false);
-              // setIsBudgetModalNestedCustomAmountModalVisible(false)
             }}
           >
             <Text
@@ -1422,6 +1397,7 @@ export default function TabOneScreen({
                     Custom Amount
                   </Text>
                 </View>
+                {/* input custom amount integer field */}
                 <TextInput
                   style={{
                     height: 90,
@@ -1452,6 +1428,7 @@ export default function TabOneScreen({
                     borderRadius: 20,
                     justifyContent: "center",
                   }}
+                  // sets budget to input field value, closes budgetmodal and custom amount modals sending user back to scan screen
                   onPress={() => {
                     setBudget(number);
                     setIsBudgetModalVisible(false);
@@ -1508,12 +1485,10 @@ export default function TabOneScreen({
         // scanned item popup
         <View
           style={{
-            // backgroundColor: "#fff",
             borderTopRightRadius: 20,
             borderTopLeftRadius: 20,
             position: "absolute",
             zIndex: 1,
-            // width: 310
             bottom: 110,
           }}
         >
@@ -1521,10 +1496,7 @@ export default function TabOneScreen({
           <View
             style={{
               backgroundColor: "#fff",
-
               borderRadius: 20,
-              // flex: 1,
-
               justifyContent: "space-evenly",
             }}
           >
@@ -1554,7 +1526,7 @@ export default function TabOneScreen({
               <Text style={{ color: "#000", flexWrap: "wrap", flex: 1 }}>
                 {scannedItemStorage.title}
               </Text>
-              {/* button subtracts amount of producttoadd if it isnt zero */}
+              {/* button subtracts amount of product to add if it isnt zero */}
               <Button
                 title={"-"}
                 onPress={() => {
@@ -1565,6 +1537,7 @@ export default function TabOneScreen({
                   }
                 }}
               />
+              {/* display number between plus/ minus sign */}
               <Text style={{ color: "#000" }}>{amountOfProductToAdd}</Text>
               <Button
                 title={"+"}
@@ -1585,12 +1558,8 @@ export default function TabOneScreen({
               justifyContent: "center",
               marginTop: 1,
               padding: 2,
-              // width: 100
             }}
           >
-
-
-            
             {/* for loop taking amount of items to be added and looping through add scannitemstorage to productlist */}
             <Button
               title={`Add to Cart                               $${
@@ -1598,17 +1567,18 @@ export default function TabOneScreen({
               }`}
               onPress={() => {
                 let productListCopy = [...productList];
-                let priceToAdd = (scannedItemStorage.price)*taxRate
+                let priceToAdd = scannedItemStorage.price * taxRate;
                 for (let i = 0; i < amountOfProductToAdd; i++) {
                   // add scanned item info from scannedItemStorage to product list copy
                   productListCopy.push(scannedItemStorage);
                   // set product list state as updated list
                   setProductList(productListCopy);
                   // set current total with new item added
-                  setCurrentTotal(currentTotal+priceToAdd)
+                  setCurrentTotal(currentTotal + priceToAdd);
                 }
-                // getCurrentTotalFromProductList();
+                // revert scanned item to nothing
                 setScannedItemStorage({});
+                // set scanned to false -> closes item popup
                 setScanned(false);
               }}
               color="#fff"
