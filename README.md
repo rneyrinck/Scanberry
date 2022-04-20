@@ -45,30 +45,31 @@ The design/concept of the app is credited to Mar Jorgenson, a senior UX designer
 ## Design Specifications
 
 #### WireFrames
+![scanberry-wireframe](https://user-images.githubusercontent.com/76080458/164326799-b3e08081-5c1b-4025-8a17-8aa9128fb2e2.jpg)
 
-![Figma wireframes - Mar Jorgenson](https://www.figma.com/file/Ud7rIx5CyIpj7bfWVPxGtW?node-id=1320:4368)
+<!-- ![Figma wireframes - Mar Jorgenson](https://www.figma.com/file/Ud7rIx5CyIpj7bfWVPxGtW?node-id=1320:4368) -->
 
 #### Special Components
 
-###### Guage Example
-
-![Guage example](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F631afe44-73a0-4528-bbae-4415ce94e1bb%2Fimage_12.png?table=block&id=c04652a9-6c3d-481a-ba98-23eed8146d40&spaceId=34b1dba4-4815-4131-a50e-fdd812f2becb&width=1530&userId=6a07e3b1-3ab7-479f-a962-9709de9c4fa4&cache=v2)
-
 ###### Custom Spending Goal
-
-![Custom spending goal component image](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fb1649b32-9fa4-4ef6-90ce-a8d1b239b526%2Fimage_22.png?table=block&id=68d01d88-45e0-431b-b629-479c6b5fb575&spaceId=34b1dba4-4815-4131-a50e-fdd812f2becb&width=1530&userId=6a07e3b1-3ab7-479f-a962-9709de9c4fa4&cache=v2)
+<img src="https://user-images.githubusercontent.com/76080458/164327573-c7663e9c-5300-4763-94a7-10aa0f0c63d8.jpg" alt="custom spending goal component" width= "200px"/>
+<!-- ![scanberry-wireframe-budget](https://user-images.githubusercontent.com/76080458/164327573-c7663e9c-5300-4763-94a7-10aa0f0c63d8.jpg) -->
+<!-- 
+![Custom spending goal component image](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fb1649b32-9fa4-4ef6-90ce-a8d1b239b526%2Fimage_22.png?table=block&id=68d01d88-45e0-431b-b629-479c6b5fb575&spaceId=34b1dba4-4815-4131-a50e-fdd812f2becb&width=1530&userId=6a07e3b1-3ab7-479f-a962-9709de9c4fa4&cache=v2) -->
 
 ###### Delete Item From Total
+<img src="https://user-images.githubusercontent.com/76080458/164327865-7da57b7d-7b80-4212-8c76-85e384012b37.jpg" alt="custom spending goal component" width= "200px"/>
 
-![Delete item component image](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F7133cc7b-7931-433e-a139-30ef1bf5d7ee%2Fimage_17.png?table=block&id=e04299e6-9ffe-4b55-be13-1058213457b6&spaceId=34b1dba4-4815-4131-a50e-fdd812f2becb&width=1530&userId=6a07e3b1-3ab7-479f-a962-9709de9c4fa4&cache=v2)
+<!-- ![scanberry-wireframe-delete](https://user-images.githubusercontent.com/76080458/164327865-7da57b7d-7b80-4212-8c76-85e384012b37.jpg) -->
 
 ###### Landing Screen
-
-![Landing Screen component image](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F87eb15aa-f27b-466d-bfac-319e6d118382%2Fimage_7.png?table=block&id=5fd15c04-91f7-4751-8661-b482bbe503bd&spaceId=34b1dba4-4815-4131-a50e-fdd812f2becb&width=1530&userId=6a07e3b1-3ab7-479f-a962-9709de9c4fa4&cache=v2)
+<img src="https://user-images.githubusercontent.com/76080458/164328204-16a6ee5d-d3f0-4c2e-bd8e-51efb9bc28ae.jpg" alt="custom spending goal component" width= "200px"/>
+<!-- 
+![Landing Screen component image](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F87eb15aa-f27b-466d-bfac-319e6d118382%2Fimage_7.png?table=block&id=5fd15c04-91f7-4751-8661-b482bbe503bd&spaceId=34b1dba4-4815-4131-a50e-fdd812f2becb&width=1530&userId=6a07e3b1-3ab7-479f-a962-9709de9c4fa4&cache=v2) -->
 
 ###### Scanning Screen
+<img src="https://user-images.githubusercontent.com/76080458/164328054-9d77de1f-350b-4f2c-9656-e0f2fdc5728f.jpg" alt="custom spending goal component" width= "200px"/>
 
-![Scanning screen component image](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fa554a0a6-5e94-486c-ab15-0895ce5e4daa%2Fimage_27.png?table=block&id=a6d2b1f6-099e-4e0d-81c4-7bc992ad4645&spaceId=34b1dba4-4815-4131-a50e-fdd812f2becb&width=1530&userId=6a07e3b1-3ab7-479f-a962-9709de9c4fa4&cache=v2)
 
 ## User Stories
 
